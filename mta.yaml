@@ -1,0 +1,125 @@
+_schema-version: 3.3.0
+ID: timesheetentry
+description: Timesheet Entry Application.
+version: 1.0.0
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npm ci
+    - npx cds build --production
+
+modules:
+- name: timesheetentry-srv
+  type: nodejs
+  path: gen/srv
+  parameters:
+    buildpack: nodejs_buildpack
+    disk-quota: 512M
+    instances: 1
+    memory: 512M
+    readiness-health-check-http-endpoint: /health
+    readiness-health-check-type: http
+  build-parameters:
+    builder: npm-ci
+    ignore:
+    - ./node_modules
+    - .env
+  provides:
+  - name: srv-api
+    properties:
+      srv-url: ${default-url}
+  requires:
+  - name: timesheetentry-destination
+  
+  
+- name: timesheetentry-app-deployer
+  type: com.sap.application.content
+  path: gen
+  requires:
+  - name: timesheetentry-html5-repo-host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: app/
+    requires:
+    - artifacts:
+      - timesheetentry.zip
+      name: timesheetentry
+      target-path: app//
+
+- name: timesheetentry
+  type: html5
+  path: app/timesheetentry
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm ci
+    - npm run build:cf
+    supported-platforms: []
+
+- name: timesheetentry-destinations
+  type: com.sap.application.content
+  requires:
+    - name: timesheetentry-html5-repo-host
+      parameters:
+        service-key:
+          name: timesheetentry-html5-repo-host-key
+    - name: srv-api
+    - name: timesheetentry-destination
+      parameters:
+        content-target: true
+  build-parameters:
+    no-source: true
+  parameters:
+      content:
+        subaccount:
+          existing_destinations_policy: update
+          destinations:
+            - Name: timesheetentry-html5-repository
+              ServiceInstanceName: timesheetentry-html5-repo-host
+              ServiceKeyName: timesheetentry-html5-repo-host-key
+              sap.cloud.service: timesheetentry
+
+resources:
+- name: timesheetentry-destination
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      init_data:
+        instance:
+          subaccount:
+            existing_destinations_policy: update
+            destinations:
+            - Authentication: NoAuthentication
+              HTML5.DynamicDestination: true
+              HTML5.ForwardAuthToken: true
+              Name: timesheetentry-srv-api
+              ProxyType: Internet
+              Type: HTTP
+              URL: ~{srv-api/srv-url}
+            - Authentication: NoAuthentication
+              Name: ui5
+              ProxyType: Internet
+              Type: HTTP
+              URL: https://ui5.sap.com
+    service: destination
+    service-plan: lite
+  requires:
+    - name: srv-api
+      group: destinations
+      properties:
+        name: srv-api # must be used in xs-app.json as well
+        url: ~{srv-url}
+        forwardAuthToken: true
+          
+- name: timesheetentry-html5-repo-host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-plan: app-host

@@ -1,0 +1,117 @@
+{
+  "name": "timesheetentry",
+  "version": "1.0.0",
+  "description": "A simple CAP project.",
+  "repository": "<Add your repository here>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@cap-js-community/odata-v2-adapter": "^1.13.7",
+    "@sap-cloud-sdk/connectivity": "^3.23.0",
+    "@sap-cloud-sdk/generator": "^3.23.0",
+    "@sap-cloud-sdk/odata-v2": "^3.23.0",
+    "@sap/cds": "^8",
+    "chai": "^5.1.2",
+    "express": "^4"
+  },
+  "devDependencies": {
+    "@cap-js/cds-types": "^0.7.0",
+    "@cap-js/sqlite": "^1",
+    "@sap/cds-dk": "^8",
+    "@types/chai": "^5.0.1",
+    "install": "^0.13.0",
+    "mbt": "^1.2.33",
+    "npm": "^11.1.0",
+    "rimraf": "^5.0.5"
+  },
+  "scripts": {
+    "start": "cds-serve",
+    "watch-timesheetentry": "cds watch --open timesheetentry/webapp/index.html?sap-ui-xx-viewCache=false",
+    "undeploy": "cf undeploy timesheetentry --delete-services --delete-service-keys --delete-service-brokers",
+    "build": "rimraf resources mta_archives && mbt build --mtar archive",
+    "deploy": "cf deploy mta_archives/archive.mtar --retries 1"
+  },
+  "cds": {
+    "fiori": {
+      "preview": true
+    },
+    "server": {
+      "index": true
+    },
+    "requires": {
+      "destinations": true,
+      "html5-repo": true,
+      "connectivity": true,
+      "API_MANAGE_WORKFORCE_TIMESHEET": {
+        "kind": "odata-v2",
+        "model": "srv/external/API_MANAGE_WORKFORCE_TIMESHEET",
+        "[hybrid]": {
+          "credentials": {
+            "destination": "MANAGEWORKFORCE",
+            "path": "/sap/opu/odata/sap/API_MANAGE_WORKFORCE_TIMESHEET"
+          },
+          "destinationOptions": {
+            "selectionStrategy": "alwaysSubscriber",
+            "useCache": true
+          }
+        }
+      },
+      "YY1_RESOURCEWBSEASSIGNMENT_CDS": {
+        "kind": "odata-v2",
+        "model": "srv/external/YY1_RESOURCEWBSEASSIGNMENT_CDS",
+        "[hybrid]": {
+          "credentials": {
+            "destination": "MANAGEWORKFORCE",
+            "path": "/sap/opu/odata/sap/YY1_RESOURCEWBSEASSIGNMENT_CDS"
+          },
+          "destinationOptions": {
+            "selectionStrategy": "alwaysSubscriber",
+            "useCache": true
+          }
+        }
+      },
+      "YY1_TIMESHEETDETAILS_CDS": {
+        "kind": "odata-v2",
+        "model": "srv/external/YY1_TIMESHEETDETAILS_CDS",
+        "[hybrid]": {
+          "credentials": {
+            "destination": "MANAGEWORKFORCE",
+            "path": "/sap/opu/odata/sap/YY1_TIMESHEETDETAILS_CDS"
+          },
+          "destinationOptions": {
+            "selectionStrategy": "alwaysSubscriber",
+            "useCache": true
+          }
+        }
+      },
+      "YY1_TIMESHEETTASKTYPES_CDS": {
+        "kind": "odata-v2",
+        "model": "srv/external/YY1_TIMESHEETTASKTYPES_CDS",
+        "[hybrid]": {
+          "credentials": {
+            "destination": "MANAGEWORKFORCE",
+            "path": "/sap/opu/odata/sap/YY1_TIMESHEETTASKTYPES_CDS"
+          },
+          "destinationOptions": {
+            "selectionStrategy": "alwaysSubscriber",
+            "useCache": true
+          }
+        }
+      },
+      "ZAPI_EMPLOYEE_DETAILS_SB": {
+        "kind": "odata-v2",
+        "model": "srv/external/ZAPI_EMPLOYEE_DETAILS_SB",
+        "[hybrid]": {
+          "credentials": {
+            "destination": "MANAGEWORKFORCE",
+            "path": "/sap/opu/odata/sap/ZAPI_EMPLOYEE_DETAILS_SB"
+          },
+          "destinationOptions": {
+            "selectionStrategy": "alwaysSubscriber",
+            "useCache": true
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "requires": {
+    "[hybrid]": {
+      "destinations": {
+        "binding": {
+          "type": "cf",
+          "apiEndpoint": "https://api.cf.us10.hana.ondemand.com",
+          "org": "The Hackett Group d-b-a Answerthink, Inc._at-development-hgv7q18y",
+          "space": "Atdev",
+          "instance": "capm",
+          "key": "capm_key",
+          "resolved": false
+        },
+        "kind": "destinations",
+        "vcap": {
+          "name": "destinations"
+        }
+      },
+      "API_MANAGE_WORKFORCE_TIMESHEET": {
+        "credentials": {
+          "destination": "MANAGEWORKFORCE",
+          "path": "/sap/opu/odata/sap/API_MANAGE_WORKFORCE_TIMESHEET"
+        }
+      },
+      "YY1_TIMESHEETTASKTYPES_CDS": {
+        "credentials": {
+          "destination": "MANAGEWORKFORCE",
+          "path": "/sap/opu/odata/sap/YY1_TIMESHEETTASKTYPES_CDS"
+        }
+      },
+      "YY1_TIMESHEETDETAILS_CDS": {
+        "credentials": {
+          "destination": "MANAGEWORKFORCE",
+          "path": "/sap/opu/odata/sap/YY1_TIMESHEETDETAILS_CDS"
+        }
+      },
+      "YY1_RESOURCEWBSEASSIGNMENT_CDS": {
+        "credentials": {
+          "destination": "MANAGEWORKFORCE",
+          "path": "/sap/opu/odata/sap/YY1_RESOURCEWBSEASSIGNMENT_CDS"
+        }
+      },
+      "ZAPI_EMPLOYEE_DETAILS_SB": {
+        "credentials": {
+          "destination": "MANAGEWORKFORCE",
+          "path": "/sap/opu/odata/sap/ZAPI_EMPLOYEE_DETAILS_SB"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,252 @@
+{
+ "meta": {
+  "creator": "cds-dk 8.7.1"
+ },
+ "$version": "2.0",
+ "definitions": {
+  "YY1_RESOURCEWBSEASSIGNMENT_CDS": {
+   "kind": "service",
+   "@cds.external": true,
+   "@m.IsDefaultEntityContainer": "true",
+   "@sap.message.scope.supported": "true",
+   "@sap.supported.formats": "atom json xlsx"
+  },
+  "YY1_RESOURCEWBSEASSIGNMENT_CDS.YY1_ResourceWBSEAssignment": {
+   "kind": "entity",
+   "@cds.external": true,
+   "@cds.persistence.skip": true,
+   "@sap.creatable": "false",
+   "@sap.updatable": "false",
+   "@sap.deletable": "false",
+   "@sap.content.version": "1",
+   "@sap.semantics": "aggregate",
+   "@sap.label": "Resource WBS Element Assignment",
+   "elements": {
+    "ID": {
+     "key": true,
+     "type": "cds.LargeString",
+     "@sap.sortable": "false",
+     "@sap.filterable": "false",
+     "notNull": true
+    },
+    "PlanLineItemUUID": {
+     "type": "cds.UUID",
+     "@sap.aggregation.role": "dimension",
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Planning Line GUID"
+    },
+    "ResourceRequestUUID": {
+     "type": "cds.UUID",
+     "@sap.aggregation.role": "dimension",
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Demand Key"
+    },
+    "FiscalPeriod": {
+     "type": "cds.String",
+     "length": 3,
+     "@sap.aggregation.role": "dimension",
+     "@sap.display.format": "NonNegative",
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Period"
+    },
+    "FiscalYear": {
+     "type": "cds.String",
+     "length": 4,
+     "@sap.aggregation.role": "dimension",
+     "@sap.display.format": "NonNegative",
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Fiscal Year"
+    },
+    "EngagementProject": {
+     "type": "cds.String",
+     "length": 40,
+     "@sap.aggregation.role": "dimension",
+     "@sap.display.format": "UpperCase",
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Engmnt Project ID",
+     "@sap.quickinfo": "Engagement Project ID"
+    },
+    "WorkPackage": {
+     "type": "cds.String",
+     "length": 50,
+     "@sap.aggregation.role": "dimension",
+     "@sap.display.format": "UpperCase",
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Plan Item"
+    },
+    "EngagementProjectResourceType": {
+     "type": "cds.String",
+     "length": 4,
+     "@sap.aggregation.role": "dimension",
+     "@sap.display.format": "UpperCase",
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Resource Type ID"
+    },
+    "EngagementProjectResource": {
+     "type": "cds.String",
+     "length": 40,
+     "@sap.aggregation.role": "dimension",
+     "@sap.display.format": "UpperCase",
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Resource ID"
+    },
+    "EmploymentInternalID": {
+     "type": "cds.String",
+     "length": 8,
+     "@sap.aggregation.role": "dimension",
+     "@sap.display.format": "NonNegative",
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Object ID"
+    },
+    "WorkItem": {
+     "type": "cds.String",
+     "length": 10,
+     "@sap.aggregation.role": "dimension",
+     "@sap.display.format": "UpperCase",
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Work Item ID"
+    },
+    "BillingControlCategory": {
+     "type": "cds.String",
+     "length": 8,
+     "@sap.aggregation.role": "dimension",
+     "@sap.display.format": "UpperCase",
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Billing Category",
+     "@sap.quickinfo": "Billing Control Category"
+    },
+    "DeliveryOrganization": {
+     "type": "cds.String",
+     "length": 5,
+     "@sap.aggregation.role": "dimension",
+     "@sap.display.format": "UpperCase",
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Service Organization"
+    },
+    "UnitOfMeasure": {
+     "type": "cds.String",
+     "length": 3,
+     "@sap.aggregation.role": "dimension",
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Unit of Measure",
+     "@sap.semantics": "unit-of-measure"
+    },
+    "PlndEffortQty": {
+     "type": "cds.Decimal",
+     "precision": 15,
+     "scale": 3,
+     "@sap.aggregation.role": "measure",
+     "@sap.required.in.filter": "false",
+     "@sap.unit": "UnitOfMeasure",
+     "@sap.label": "Total Quantity",
+     "@sap.filterable": "false"
+    },
+    "PersonFullName": {
+     "type": "cds.String",
+     "length": 80,
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Full Name"
+    },
+    "PersonExternalID": {
+     "type": "cds.String",
+     "length": 60,
+     "@sap.aggregation.role": "dimension",
+     "@sap.display.format": "UpperCase",
+     "@sap.required.in.filter": "false",
+     "@sap.label": "ID Number",
+     "@sap.quickinfo": "Identification Number"
+    },
+    "WorkPackageName": {
+     "type": "cds.String",
+     "length": 60,
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Plan Item Desc.",
+     "@sap.quickinfo": "Plan Item Description"
+    },
+    "WorkPackageStartDate": {
+     "type": "cds.Date",
+     "@sap.aggregation.role": "dimension",
+     "@sap.display.format": "Date",
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Start Date"
+    },
+    "WorkPackageEndDate": {
+     "type": "cds.Date",
+     "@sap.aggregation.role": "dimension",
+     "@sap.display.format": "Date",
+     "@sap.required.in.filter": "false",
+     "@sap.label": "End Date"
+    },
+    "WBSElementObject": {
+     "type": "cds.String",
+     "length": 50,
+     "@sap.aggregation.role": "dimension",
+     "@sap.display.format": "UpperCase",
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Object ID"
+    },
+    "WBSDescription": {
+     "type": "cds.String",
+     "length": 80,
+     "@sap.aggregation.role": "dimension",
+     "@sap.display.format": "UpperCase",
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Object Name"
+    },
+    "WorkItemName": {
+     "type": "cds.String",
+     "length": 40,
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Work Item Name"
+    },
+    "WorkItemIsInactive": {
+     "type": "cds.String",
+     "length": 1,
+     "@sap.aggregation.role": "dimension",
+     "@sap.display.format": "UpperCase",
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Is Inactive",
+     "@sap.quickinfo": "Data Element for Work Item is Inactive"
+    },
+    "Person_1": {
+     "type": "cds.String",
+     "length": 10,
+     "@sap.aggregation.role": "dimension",
+     "@sap.display.format": "UpperCase",
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Business Partner",
+     "@sap.quickinfo": "Business Partner Number"
+    },
+    "WBSElementInternalID": {
+     "type": "cds.String",
+     "length": 8,
+     "@sap.aggregation.role": "dimension",
+     "@sap.display.format": "NonNegative",
+     "@sap.required.in.filter": "false",
+     "@sap.label": "WBS Internal ID",
+     "@sap.quickinfo": "WBS Element"
+    },
+    "EngagementProjResourceText": {
+     "type": "cds.String",
+     "length": 40,
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Resource Description"
+    },
+    "EngagementProjResourceTypeText": {
+     "type": "cds.String",
+     "length": 30,
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Resource Type Desc.",
+     "@sap.quickinfo": "Resource Type Description"
+    },
+    "EngagementProjectName": {
+     "type": "cds.String",
+     "length": 40,
+     "@sap.required.in.filter": "false",
+     "@sap.label": "Cust.Proj. Name",
+     "@sap.quickinfo": "Customer Project Name"
+    }
+   }
+  }
+ }
+}

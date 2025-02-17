@@ -1,0 +1,221 @@
+{
+  "_version": "1.65.0",
+  "sap.app": {
+    "id": "timesheetentry",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:basic",
+      "version": "1.16.3",
+      "toolsId": "0e9d8a11-8e42-4666-bbd7-8434699b97ef"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/odata/v2/TimesheetDetailsService/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "2.0"
+        }
+      },
+      "TaskTypeService":{
+        "uri": "/odata/v2/TaskTypeService",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "2.0"
+        }
+      },
+      "EmployeeService":{
+        "uri": "/odata/v2/EmployeeService",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "2.0"
+        }
+      },
+      "TimesheetService":{
+        "uri": "/odata/v2/TimesheetService",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "2.0"
+        }
+      },
+      "WbsElementService":{
+        "uri": "/odata/v2/WbsElementService",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "2.0"
+        }
+      },
+      "TimesheetDeleteService":{
+        "uri": "/odata/v2/TimesheetDeleteService",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "2.0"
+        }
+      },
+      "ConfigurationJSON": {
+        "uri": "model/configFile.json",
+        "type": "JSON"
+      },
+      "TemplateJSONData": {
+          "uri": "model/Template.json",
+          "type": "JSON"
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.132.1",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "timesheetentry.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "TaskTypeService":{
+        "dataSource": "TaskTypeService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "EmployeeService":{
+        "dataSource": "EmployeeService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "TimesheetService":{
+        "dataSource": "TimesheetService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true,
+          "useBatch": false
+        }
+      },
+      "WbsElementService":{
+        "dataSource": "WbsElementService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "TimesheetDeleteService":{
+        "dataSource": "TimesheetDeleteService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true,
+          "useBatch": false
+        }
+      },
+      "configurationModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "dataSource": "ConfigurationJSON"
+      },
+      "TemplateJSONData": {
+          "dataSource": "TemplateJSONData",
+          "type": "sap.ui.model.json.JSONModel"
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "transition": "slide",
+        "type": "View",
+        "viewType": "XML",
+        "path": "timesheetentry.view"
+      },
+      "routes": [
+        {
+          "name": "Routetimesheet_view",
+          "pattern": ":?query:",
+          "target": [
+            "Targettimesheet_view"
+          ]
+        }
+      ],
+      "targets": {
+        "Targettimesheet_view": {
+          "id": "timesheet_view",
+          "name": "timesheet_view"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "timesheetentry.view.App",
+      "type": "XML",
+      "id": "App"
+    }
+  },
+  "sap.cloud": {
+        "public": true,
+        "service": "timesheetentry"
+    }
+}

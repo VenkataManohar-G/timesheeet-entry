@@ -1,0 +1,254 @@
+{
+ "meta": {
+  "creator": "cds-dk 8.7.1"
+ },
+ "$version": "2.0",
+ "definitions": {
+  "ZAPI_EMPLOYEE_DETAILS_SB": {
+   "kind": "service",
+   "@cds.external": true,
+   "@m.IsDefaultEntityContainer": "true",
+   "@sap.message.scope.supported": "true",
+   "@sap.supported.formats": "atom json xlsx"
+  },
+  "ZAPI_EMPLOYEE_DETAILS_SB.ZI_EMPLOYEE_DETSSet": {
+   "kind": "entity",
+   "@cds.external": true,
+   "@cds.persistence.skip": true,
+   "@sap.creatable": "false",
+   "@sap.updatable": "false",
+   "@sap.deletable": "false",
+   "@sap.addressable": "false",
+   "@sap.content.version": "1",
+   "@sap.label": "Employee Details",
+   "elements": {
+    "p_email": {
+     "key": true,
+     "type": "cds.String",
+     "length": 241,
+     "@sap.label": "Email Address",
+     "notNull": true
+    },
+    "PersonWorkAgreement": {
+     "key": true,
+     "type": "cds.String",
+     "length": 8,
+     "@sap.display.format": "NonNegative",
+     "@sap.label": "Personnel Number",
+     "notNull": true
+    },
+    "CompanyCode": {
+     "type": "cds.String",
+     "length": 4,
+     "@sap.display.format": "UpperCase",
+     "@sap.label": "Company Code"
+    },
+    "PersonWorkAgreementExternalID": {
+     "type": "cds.String",
+     "length": 60,
+     "@sap.display.format": "UpperCase",
+     "@sap.label": "ID Number",
+     "@sap.quickinfo": "Identification Number"
+    },
+    "StartDate": {
+     "type": "cds.Date",
+     "@sap.display.format": "Date",
+     "@sap.label": "Start Date"
+    },
+    "EndDate": {
+     "type": "cds.Date",
+     "@sap.display.format": "Date",
+     "@sap.label": "End Date"
+    },
+    "CostCenter": {
+     "type": "cds.String",
+     "length": 10
+    },
+    "CostCenterDescription": {
+     "type": "cds.String",
+     "length": 40,
+     "@sap.label": "Cost Center Desc.",
+     "@sap.quickinfo": "Description of Cost Center"
+    },
+    "CompanyCodeName": {
+     "type": "cds.String",
+     "length": 25,
+     "@sap.label": "Company Name",
+     "@sap.quickinfo": "Name of Company Code or Company"
+    },
+    "BusinessPartner": {
+     "type": "cds.String",
+     "length": 10,
+     "@sap.display.format": "UpperCase",
+     "@sap.label": "Business Partner",
+     "@sap.quickinfo": "Business Partner Number"
+    },
+    "Email": {
+     "type": "cds.String",
+     "length": 241,
+     "@sap.label": "Email Address"
+    },
+    "UserID": {
+     "type": "cds.String",
+     "length": 12,
+     "@sap.display.format": "UpperCase",
+     "@sap.label": "User ID"
+    },
+    "PersonFullName": {
+     "type": "cds.String",
+     "length": 80,
+     "@sap.label": "Description",
+     "@sap.quickinfo": "User Description"
+    },
+    "UserName": {
+     "type": "cds.String",
+     "length": 40,
+     "@sap.display.format": "UpperCase",
+     "@sap.label": "Alias",
+     "@sap.quickinfo": "Internet user alias"
+    },
+    "createdon": {
+     "type": "cds.Date",
+     "@sap.display.format": "Date",
+     "@sap.label": "Created On",
+     "@sap.quickinfo": "Date on which the object was created"
+    },
+    "Parameters": {
+     "@sap.filterable": "false",
+     "type": "cds.Association",
+     "target": "ZAPI_EMPLOYEE_DETAILS_SB.ZI_EMPLOYEE_DETS",
+     "keys": []
+    }
+   }
+  },
+  "ZAPI_EMPLOYEE_DETAILS_SB.ZI_EMPLOYEE_DETS": {
+   "kind": "entity",
+   "@cds.external": true,
+   "@cds.persistence.skip": true,
+   "@sap.creatable": "false",
+   "@sap.updatable": "false",
+   "@sap.deletable": "false",
+   "@sap.pageable": "false",
+   "@sap.content.version": "1",
+   "@sap.semantics": "parameters",
+   "elements": {
+    "p_email": {
+     "key": true,
+     "type": "cds.String",
+     "length": 241,
+     "@sap.parameter": "mandatory",
+     "@sap.label": "Email Address",
+     "@sap.creatable": "false",
+     "@sap.updatable": "false",
+     "@sap.sortable": "false",
+     "@sap.filterable": "false",
+     "notNull": true
+    },
+    "Set": {
+     "type": "cds.Association",
+     "target": "ZAPI_EMPLOYEE_DETAILS_SB.ZI_EMPLOYEE_DETSSet",
+     "cardinality": {
+      "max": "*"
+     },
+     "keys": []
+    }
+   }
+  },
+  "ZAPI_EMPLOYEE_DETAILS_SB.ZI_EMPLOYEE_DETS_ALL": {
+   "kind": "entity",
+   "@cds.external": true,
+   "@cds.persistence.skip": true,
+   "@sap.creatable": "false",
+   "@sap.updatable": "false",
+   "@sap.deletable": "false",
+   "@sap.content.version": "1",
+   "@sap.label": "Employee Details - All",
+   "elements": {
+    "PersonWorkAgreement": {
+     "key": true,
+     "type": "cds.String",
+     "length": 8,
+     "@sap.display.format": "NonNegative",
+     "@sap.label": "Personnel Number",
+     "notNull": true
+    },
+    "CompanyCode": {
+     "type": "cds.String",
+     "length": 4,
+     "@sap.display.format": "UpperCase",
+     "@sap.label": "Company Code"
+    },
+    "PersonWorkAgreementExternalID": {
+     "type": "cds.String",
+     "length": 60,
+     "@sap.display.format": "UpperCase",
+     "@sap.label": "ID Number",
+     "@sap.quickinfo": "Identification Number"
+    },
+    "StartDate": {
+     "type": "cds.Date",
+     "@sap.display.format": "Date",
+     "@sap.label": "Start Date"
+    },
+    "EndDate": {
+     "type": "cds.Date",
+     "@sap.display.format": "Date",
+     "@sap.label": "End Date"
+    },
+    "CostCenter": {
+     "type": "cds.String",
+     "length": 10
+    },
+    "CostCenterDescription": {
+     "type": "cds.String",
+     "length": 40,
+     "@sap.label": "Cost Center Desc.",
+     "@sap.quickinfo": "Description of Cost Center"
+    },
+    "CompanyCodeName": {
+     "type": "cds.String",
+     "length": 25,
+     "@sap.label": "Company Name",
+     "@sap.quickinfo": "Name of Company Code or Company"
+    },
+    "BusinessPartner": {
+     "type": "cds.String",
+     "length": 10,
+     "@sap.display.format": "UpperCase",
+     "@sap.label": "Business Partner",
+     "@sap.quickinfo": "Business Partner Number"
+    },
+    "Email": {
+     "type": "cds.String",
+     "length": 241,
+     "@sap.label": "Email Address"
+    },
+    "UserID": {
+     "type": "cds.String",
+     "length": 12,
+     "@sap.display.format": "UpperCase",
+     "@sap.label": "User ID"
+    },
+    "PersonFullName": {
+     "type": "cds.String",
+     "length": 80,
+     "@sap.label": "Description",
+     "@sap.quickinfo": "User Description"
+    },
+    "UserName": {
+     "type": "cds.String",
+     "length": 40,
+     "@sap.display.format": "UpperCase",
+     "@sap.label": "Alias",
+     "@sap.quickinfo": "Internet user alias"
+    },
+    "createdon": {
+     "type": "cds.Date",
+     "@sap.display.format": "Date",
+     "@sap.label": "Created On",
+     "@sap.quickinfo": "Date on which the object was created"
+    }
+   }
+  }
+ }
+}
