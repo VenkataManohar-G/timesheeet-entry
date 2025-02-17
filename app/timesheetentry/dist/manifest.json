@@ -72,6 +72,19 @@
                 "uri": "model/Template.json",
                 "type": "JSON"
             }
+        },
+        "crossNavigation": {
+            "inbounds": {
+                "timesheetentry-manage": {
+                    "semanticObject": "timesheetentry",
+                    "action": "manage",
+                    "title": "{{flpTitle}}",
+                    "signature": {
+                        "parameters": {},
+                        "additionalParameters": "allowed"
+                    }
+                }
+            }
         }
     },
     "sap.ui": {

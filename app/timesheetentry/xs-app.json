@@ -3,9 +3,9 @@
   "authenticationMethod": "route",
   "routes": [
     {
-      "source": "^/odata/(.*)$",
-      "target": "/odata/$1",
-      "destination": "timesheetentry-srv-api",
+      "source": "^odata/(.*)$",
+      "target": "odata/$1",
+      "destination": "MANAGEWORKFORCE",
       "authenticationType": "xsuaa",
       "csrfProtection": false
     },
