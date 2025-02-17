@@ -1,0 +1,224 @@
+<mvc:View controllerName="timesheetentry.controller.timesheet_view"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m" xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout">
+    <Page showFooter="true" id="page" title="{i18n>title}">
+         <content>
+            <VBox id="id_vbox" class="sapUiSmallMargin">
+                <f:SimpleForm id="id_simpleform" editable="true" layout="ResponsiveGridLayout" title="{i18n>detailsscreen}" labelSpanXL="4" 
+                        labelSpanM="4" labelSpanL="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="4" emptySpanM="0"
+                        emptySpanS="0" columnsXL="4" columnsL="1" columnsM="1" singleContainerFullSize="false" >
+                    <f:content>
+                        <core:Title id="id_stitle" text="{i18n>screentitle}"></core:Title>
+                        <Label id="id_employee_label" text="{i18n>employeeId}" design="Bold" width="100%" required="true" textAlign="Begin" textDirection="LTR" />
+                        <Text id="id_employee_extid" />
+						<Label id="id_wrkid_label_add" text="{i18n>workerId}" design="Bold" width="100%" required="true" textAlign="Begin" textDirection="LTR" />
+                        <Text id="id_wrkid_add" />
+						<Label id="id_ccenter_label_add"  text="{i18n>costCenter}" design="Bold" width="100%" required="true" textAlign="Begin" textDirection="LTR" />
+                        <Text id="id_ccenter_add" />
+                        <ToolbarSpacer id="id_toolsbar" ></ToolbarSpacer>
+						<Label id="id_daterangelabel" text="{i18n>dateRange}" design="Bold" width="100%" required="true" textAlign="Right" textDirection="Inherit"/>
+						<DateRangeSelection id="id_daterange1" showCurrentDateButton="true"
+						change="handleDateChange"
+                        value= "{
+				                    'type': 'sap.ui.model.type.DateInterval',
+				                    'formatOptions': {
+					                			'pattern': 'yyyy-MM-dd'
+				                	},
+				                    'parts': [
+					                            {
+						                            'type': 'sap.ui.model.type.Date',
+						                            'path': 'DateModel>/start'
+					                            },
+					                            {
+						                            'type': 'sap.ui.model.type.Date',
+						                            'path': 'DateModel>/end'
+					                            }
+				                            ]
+			                    }" />
+                        <ToolbarSpacer id="id_toolsbar_slectionscreen" ></ToolbarSpacer>	
+				        <Button id="id_search" text="{i18n>search}" width="50%" type="Default" press=".onFilter" class="sapUiSmallMarginEnd" >
+					        <layoutData>
+						        <FlexItemData id="id_itemdata5" growFactor="1" />
+					        </layoutData>
+				        </Button>
+                    </f:content>
+                   </f:SimpleForm>
+            </VBox>
+            <VBox id="id_vboxtable" class="sapUiSmallMargin">
+					<Table width="auto" noDataText="No data" showSeparators="All" growing="true" growingThreshold="20" growingScrollToLoad="true" updateFinished="onUpdateFinished"
+						items="{ path: 'Timesheet>/', sorter: [{
+                                                                path: 'TimeSheetDate',
+                                                                descending : false
+                                                        }] }" 
+						id="daysTable" showUnread="true" showNoData="false" backgroundDesign="Solid"
+						selectionChange="onSelectionChange" mode="MultiSelect" sticky="ColumnHeaders,HeaderToolbar">
+						<columns>
+							<Column id="idcolumn1" width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Block" mergeDuplicates="false">
+								<header>
+									<Text id="idtext1" text="Recorded Date" width="auto" maxLines="2" wrapping="true" textAlign="Begin" textDirection="Inherit"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column id="idcolumn2" width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Block" mergeDuplicates="false">
+								<header>
+									<Text id="idtext2" text="Project" width="auto" maxLines="1" wrapping="true" textAlign="Begin" textDirection="Inherit"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column id="idcolumn3" width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Block" mergeDuplicates="false">
+								<header>
+									<Text id="idtext3" text="Wbs Element" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column id="idcolumn4" width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Block" mergeDuplicates="false">
+								<header>
+									<Text id="idtext4" text="Receiver Cost Center" width="auto" maxLines="2" wrapping="true" textAlign="Begin" textDirection="Inherit"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column id="idcolumn5" width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Block" mergeDuplicates="false">
+								<header>
+									<Text id="idtext5" text="Sender Cost Center" width="auto" maxLines="2" wrapping="true" textAlign="Begin" textDirection="Inherit"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column id="idcolumn6" width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Block" mergeDuplicates="false">
+								<header>
+									<Text id="idtext6" text="Recorded Hours" width="auto" maxLines="2" wrapping="true" textAlign="Begin" textDirection="Inherit"/>
+								</header>
+								<footer/>
+							</Column>
+                            <Column id="idcolumn7" width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Block" mergeDuplicates="false">
+								<header>
+									<Text id="idtext7" text="Recorded Status" width="auto" maxLines="2" wrapping="true" textAlign="Begin" textDirection="Inherit"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column id="idcolumn8" width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Block" mergeDuplicates="false">
+								<header>
+									<Text id="idtext8" text="Created By" width="auto" maxLines="1" wrapping="true" textAlign="Begin" textDirection="Inherit"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column id="idcolumn9" width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Block" mergeDuplicates="false">
+								<header>
+									<Text id="idtext9" text="Approved By" width="auto" maxLines="1" wrapping="true" textAlign="Begin" textDirection="Inherit"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column id="idcolumn13" width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" visible="false" demandPopin="true" popinDisplay="Block" mergeDuplicates="false">
+								<header>
+									<Text id="idtext13" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column id="idcolumn14" width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" visible="false" demandPopin="true" popinDisplay="Block" mergeDuplicates="false">
+								<header>
+									<Text id="idtext14" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column id="idcolumn15" width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" visible="false" demandPopin="true" popinDisplay="Block" mergeDuplicates="false">
+								<header>
+									<Text id="idtext15" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column id="idcolumn16" width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" visible="false" demandPopin="true" popinDisplay="Block" mergeDuplicates="false">
+								<header>
+									<Text id="idtext16" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column id="idcolumn17" width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" visible="false" demandPopin="true" popinDisplay="Block" mergeDuplicates="false">
+								<header>
+									<Text id="idtext17" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column id="idcolumn18" width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" visible="false" demandPopin="true" popinDisplay="Block" mergeDuplicates="false">
+								<header>
+									<Text id="idtext18" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column id="idcolumn19" width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" visible="false" demandPopin="true" popinDisplay="Block" mergeDuplicates="false">
+								<header>
+									<Text id="idtext19" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column id="idcolumn20" width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" visible="false" demandPopin="true" popinDisplay="Block" mergeDuplicates="false">
+								<header>
+									<Text id="idtext20" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column id="idcolumn21" width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" visible="false" demandPopin="true" popinDisplay="Block" mergeDuplicates="false">
+								<header>
+									<Text id="idtext21" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit"/>
+								</header>
+								<footer/>
+							</Column>
+							<Column id="idcolumn12" width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Block" mergeDuplicates="false">
+								<header>
+									<Text id="idtext12" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit"/>
+								</header>
+								<footer/>
+							</Column>
+						</columns>
+						<items>
+							<ColumnListItem id="columnList" highlight="None">
+								<cells>
+									<DateTimePicker width="120%" id="id_cell2" value= "{
+                                                                                                        path: 'Timesheet>TimeSheetDate',
+                                                                                                        type: 'sap.ui.model.type.DateTime',
+                                                                                                        formatOptions: {
+                                                                                                                            'pattern': 'MM/dd/yyyy',
+																															'strictParsing': true,
+                                                                                                                            'UTC': true
+                                                                                                                        }
+								                                                                }"
+                                                                                                editable="false"
+							        />
+									<Text id="id_cell1" text="{= ${Timesheet>Project_1} !== '' ? ${Timesheet>ProjectDescription_1} !== '' ? ${Timesheet>Project_1} + ' ' + '(' + ${Timesheet>ProjectDescription_1} + ')' : ${Timesheet>Project_1} : '' }"/>
+									<Text id="id_cell3" text="{= ${Timesheet>WBSElementInternalID} !== '' ? ${Timesheet>WBSDescription} !== '' ? ${Timesheet>WBSElementInternalID} + ' ' + '(' + ${Timesheet>WBSDescription} + ')' : ${Timesheet>WBSElementInternalID} : ''	}"/>
+									<Text id="id_cell4" text="{= ${Timesheet>ReceiverCostCenter} !== '' ? ${Timesheet>ReceiverCostCenter} !== '' ? ${Timesheet>ReceiverCostCenter} + ' ' + '(' + ${Timesheet>ReceiverCostCenterDescription} + ')' : ${Timesheet>ReceiverCostCenter} : '' }"/>
+                                    <Text id="id_cell5" text="{= ${Timesheet>SenderCostCenter} !== '' ? ${Timesheet>SenderCostCenterDescription} !== '' ? ${Timesheet>SenderCostCenter} + ' ' + '(' + ${Timesheet>SenderCostCenterDescription} + ')' : ${Timesheet>SenderCostCenter} : '' }"/>
+                                    <Text id="id_cell6" text="{Timesheet>RecordedHours}"/>
+									<ObjectStatus id="id_cell7" text="{= ${Timesheet>TimeSheetStatus} !== '' ? ${Timesheet>TimeSheetStatusText} !== '' ? ${Timesheet>TimeSheetStatusText} + ' ' + '(' + ${Timesheet>TimeSheetStatus} + ')' : ${Timesheet>TimeSheetStatus} : '' }" state="{path: 'Timesheet>TimeSheetStatus', formatter: '.formatStatus'}" />
+									<Text id="id_cell8" text="{= ${Timesheet>CreatedByUser} !== '' ? ${Timesheet>CreatedByName} !== '' ? ${Timesheet>CreatedByUser} + ' ' + '(' + ${Timesheet>CreatedByName} + ')' : ${Timesheet>CreatedByUser} : '' }"/>
+									<Text id="id_cell9" text="{= ${Timesheet>TimeSheetApprovedByUser} !== '' ? ${Timesheet>ApprovedByName} !== '' ? ${Timesheet>TimeSheetApprovedByUser} + ' ' + '(' + ${Timesheet>ApprovedByName} + ')' : ${Timesheet>TimeSheetApprovedByUser} : '' }"/>
+									<Text id="id_cell13" text="{Timesheet>TimeSheetRecord}"/>
+									<Text id="id_cell14" text="{Timesheet>TimeSheetTaskComponent}"/>
+									<Text id="id_cell15" text="{Timesheet>ReceiverCostCenter}"/>
+									<Text id="id_cell16" text="{Timesheet>TimeSheetTaskType}"/>
+									<Text id="id_cell17" text="{Timesheet>TimeSheetTaskLevel}"/>
+									<Text id="id_cell18" text="{Timesheet>ControllingArea>}"/>
+									<Text id="id_cell19" text="{Timesheet>CompanyCode>}"/>
+									<Text id="id_cell20" text="{Timesheet>WBSElementInternalID>}"/>
+									<Text id="id_cell21" text="{Timesheet>TimeSheetStatus}"/>
+									<Button id="id_cell12" type="Reject" iconFirst="true" width="auto"
+									iconDensityAware="false" press="ondeleterow" enabled="{= ${Timesheet>TimeSheetStatus} === '60' ? false : true }" icon="sap-icon://delete"/>
+								</cells>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</VBox>
+        </content>
+			<footer>
+				<Bar id="id_button_footer" design="Auto">
+					<contentRight>
+                        <Button id="id_button_submit" text="{i18n>dialogsubmitButtonText}" type="Success" iconFirst="true" width="auto" visible="{path: '/buttonsVisible/cancel'}"
+							iconDensityAware="false" press="onupdatesubmit" icon="sap-icon://accept" enabled="false"/>
+						<Button id="id_button_add" text="{i18n>addEntries}" type="Accept" iconFirst="true" width="auto" enabled="true" visible="{path: '/buttonsVisible/edit'}" activeIcon="sap-icon://edit"
+							press="onAdd" icon="sap-icon://add"/>
+						<Button id="id_button_cancel" text="{i18n>delete}" type="Reject" iconFirst="true" width="auto" visible="{path: '/buttonsVisible/cancel'}"
+							iconDensityAware="false" press="ondelete" icon="sap-icon://delete" enabled="false"/>
+					</contentRight>
+				</Bar>
+			</footer>
+    </Page>
+</mvc:View>

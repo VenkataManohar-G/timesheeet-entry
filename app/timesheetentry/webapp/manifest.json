@@ -17,47 +17,47 @@
     },
     "dataSources": {
       "mainService": {
-        "uri": "/odata/v2/TimesheetDetailsService/",
+        "uri": "odata/v2/TimesheetDetailsService/",
         "type": "OData",
         "settings": {
           "annotations": [],
           "odataVersion": "2.0"
         }
       },
-      "TaskTypeService":{
-        "uri": "/odata/v2/TaskTypeService",
+      "TaskTypeService": {
+        "uri": "odata/v2/TaskTypeService",
         "type": "OData",
         "settings": {
           "annotations": [],
           "odataVersion": "2.0"
         }
       },
-      "EmployeeService":{
-        "uri": "/odata/v2/EmployeeService",
+      "EmployeeService": {
+        "uri": "odata/v2/EmployeeService",
         "type": "OData",
         "settings": {
           "annotations": [],
           "odataVersion": "2.0"
         }
       },
-      "TimesheetService":{
-        "uri": "/odata/v2/TimesheetService",
+      "TimesheetService": {
+        "uri": "odata/v2/TimesheetService",
         "type": "OData",
         "settings": {
           "annotations": [],
           "odataVersion": "2.0"
         }
       },
-      "WbsElementService":{
-        "uri": "/odata/v2/WbsElementService",
+      "WbsElementService": {
+        "uri": "odata/v2/WbsElementService",
         "type": "OData",
         "settings": {
           "annotations": [],
           "odataVersion": "2.0"
         }
       },
-      "TimesheetDeleteService":{
-        "uri": "/odata/v2/TimesheetDeleteService",
+      "TimesheetDeleteService": {
+        "uri": "odata/v2/TimesheetDeleteService",
         "type": "OData",
         "settings": {
           "annotations": [],
@@ -69,8 +69,21 @@
         "type": "JSON"
       },
       "TemplateJSONData": {
-          "uri": "model/Template.json",
-          "type": "JSON"
+        "uri": "model/Template.json",
+        "type": "JSON"
+      }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "timesheetentry-manage": {
+          "semanticObject": "timesheetentry",
+          "action": "manage",
+          "title": "{{flpTitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
       }
     }
   },
@@ -119,7 +132,7 @@
           "earlyRequests": true
         }
       },
-      "TaskTypeService":{
+      "TaskTypeService": {
         "dataSource": "TaskTypeService",
         "preload": true,
         "settings": {
@@ -128,7 +141,7 @@
           "earlyRequests": true
         }
       },
-      "EmployeeService":{
+      "EmployeeService": {
         "dataSource": "EmployeeService",
         "preload": true,
         "settings": {
@@ -137,7 +150,7 @@
           "earlyRequests": true
         }
       },
-      "TimesheetService":{
+      "TimesheetService": {
         "dataSource": "TimesheetService",
         "preload": true,
         "settings": {
@@ -147,7 +160,7 @@
           "useBatch": false
         }
       },
-      "WbsElementService":{
+      "WbsElementService": {
         "dataSource": "WbsElementService",
         "preload": true,
         "settings": {
@@ -156,7 +169,7 @@
           "earlyRequests": true
         }
       },
-      "TimesheetDeleteService":{
+      "TimesheetDeleteService": {
         "dataSource": "TimesheetDeleteService",
         "preload": true,
         "settings": {
@@ -171,8 +184,8 @@
         "dataSource": "ConfigurationJSON"
       },
       "TemplateJSONData": {
-          "dataSource": "TemplateJSONData",
-          "type": "sap.ui.model.json.JSONModel"
+        "dataSource": "TemplateJSONData",
+        "type": "sap.ui.model.json.JSONModel"
       }
     },
     "resources": {
@@ -215,7 +228,7 @@
     }
   },
   "sap.cloud": {
-        "public": true,
-        "service": "timesheetentry"
-    }
+    "public": true,
+    "service": "timesheetentry"
+  }
 }

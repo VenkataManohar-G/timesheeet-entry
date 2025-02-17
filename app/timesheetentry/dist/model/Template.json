@@ -1,0 +1,12 @@
+{
+    "Template": [
+        {
+            "Card": "1",
+            "Description":"Previous Week Timecard"
+        },
+        {
+            "Card": "2",
+            "Description":"Timecard from Templates"
+        }
+    ]
+}

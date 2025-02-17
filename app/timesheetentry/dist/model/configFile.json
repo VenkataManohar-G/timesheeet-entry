@@ -1,0 +1,8 @@
+{
+    "configFile": [
+        {
+            "WbsElementEmployee":false,
+            "WbsElement":true
+        }
+    ]
+}

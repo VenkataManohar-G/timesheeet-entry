@@ -11,6 +11,7 @@ build-parameters:
     commands:
     - npm ci
     - npx cds build --production
+    - mkdir -p resources
 
 modules:
 - name: timesheetentry-srv
@@ -18,13 +19,10 @@ modules:
   path: gen/srv
   parameters:
     buildpack: nodejs_buildpack
-    disk-quota: 512M
-    instances: 1
-    memory: 512M
     readiness-health-check-http-endpoint: /health
     readiness-health-check-type: http
   build-parameters:
-    builder: npm-ci
+    builder: npm
     ignore:
     - ./node_modules
     - .env
@@ -34,6 +32,7 @@ modules:
       srv-url: ${default-url}
   requires:
   - name: timesheetentry-destination
+  - name: timesheetentry-auth
   
   
 - name: timesheetentry-app-deployer
@@ -59,12 +58,16 @@ modules:
     builder: custom
     commands:
     - npm ci
-    - npm run build:cf
+    - npm run build
     supported-platforms: []
 
 - name: timesheetentry-destinations
   type: com.sap.application.content
   requires:
+    - name: timesheetentry-auth
+      parameters:
+        service-key:
+          name: timesheetentry-auth-key
     - name: timesheetentry-html5-repo-host
       parameters:
         service-key:
@@ -83,6 +86,11 @@ modules:
             - Name: timesheetentry-html5-repository
               ServiceInstanceName: timesheetentry-html5-repo-host
               ServiceKeyName: timesheetentry-html5-repo-host-key
+              sap.cloud.service: timesheetentry
+            - Name: timesheetentry-auth
+              Authentication: OAuth2UserTokenExchange
+              ServiceInstanceName: timesheetentry-auth
+              ServiceKeyName: timesheetentry-auth-key
               sap.cloud.service: timesheetentry
 
 resources:
@@ -123,3 +131,13 @@ resources:
   parameters:
     service: html5-apps-repo
     service-plan: app-host
+
+- name: timesheetentry-auth
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: xsuaa
+    service-plan: application
+    path: ./xs-security.json
+    config:
+      xsappname: timesheetentry-${space}
+      tenant-mode: dedicated
