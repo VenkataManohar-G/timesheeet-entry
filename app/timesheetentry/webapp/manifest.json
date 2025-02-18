@@ -83,6 +83,14 @@
             "parameters": {},
             "additionalParameters": "allowed"
           }
+        },
+        "timesheetentry-display": {
+          "semanticObject": "timesheetentry",
+          "action": "display",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
         }
       }
     }

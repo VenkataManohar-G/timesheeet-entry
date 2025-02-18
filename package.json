@@ -12,7 +12,8 @@
     "@sap-cloud-sdk/odata-v2": "^3.23.0",
     "@sap/cds": "^8",
     "chai": "^5.1.2",
-    "express": "^4"
+    "express": "^4",
+    "@sap/xssec": "^4"
   },
   "devDependencies": {
     "@cap-js/cds-types": "^0.7.0",
@@ -28,7 +29,7 @@
     "start": "cds-serve",
     "watch-timesheetentry": "cds watch --open timesheetentry/webapp/index.html?sap-ui-xx-viewCache=false",
     "undeploy": "cf undeploy timesheetentry --delete-services --delete-service-keys --delete-service-brokers",
-    "build": "rimraf resources mta_archives && mbt build --mtar archive",
+    "build": "npx rimraf resources mta_archives && mbt build --mtar archive",
     "deploy": "cf deploy mta_archives/archive.mtar --retries 1"
   },
   "cds": {
@@ -54,6 +55,16 @@
             "selectionStrategy": "alwaysSubscriber",
             "useCache": true
           }
+        },
+        "[production]": {
+          "credentials": {
+            "destination": "MANAGEWORKFORCE",
+            "path": "/sap/opu/odata/sap/ZAPI_EMPLOYEE_DETAILS_SB"
+          },
+          "destinationOptions": {
+            "selectionStrategy": "alwaysSubscriber",
+            "useCache": true
+          }
         }
       },
       "YY1_RESOURCEWBSEASSIGNMENT_CDS": {
@@ -63,6 +74,16 @@
           "credentials": {
             "destination": "MANAGEWORKFORCE",
             "path": "/sap/opu/odata/sap/YY1_RESOURCEWBSEASSIGNMENT_CDS"
+          },
+          "destinationOptions": {
+            "selectionStrategy": "alwaysSubscriber",
+            "useCache": true
+          }
+        },
+        "[production]": {
+          "credentials": {
+            "destination": "MANAGEWORKFORCE",
+            "path": "/sap/opu/odata/sap/ZAPI_EMPLOYEE_DETAILS_SB"
           },
           "destinationOptions": {
             "selectionStrategy": "alwaysSubscriber",
@@ -82,6 +103,16 @@
             "selectionStrategy": "alwaysSubscriber",
             "useCache": true
           }
+        },
+        "[production]": {
+          "credentials": {
+            "destination": "MANAGEWORKFORCE",
+            "path": "/sap/opu/odata/sap/ZAPI_EMPLOYEE_DETAILS_SB"
+          },
+          "destinationOptions": {
+            "selectionStrategy": "alwaysSubscriber",
+            "useCache": true
+          }
         }
       },
       "YY1_TIMESHEETTASKTYPES_CDS": {
@@ -91,6 +122,16 @@
           "credentials": {
             "destination": "MANAGEWORKFORCE",
             "path": "/sap/opu/odata/sap/YY1_TIMESHEETTASKTYPES_CDS"
+          },
+          "destinationOptions": {
+            "selectionStrategy": "alwaysSubscriber",
+            "useCache": true
+          }
+        },
+        "[production]": {
+          "credentials": {
+            "destination": "MANAGEWORKFORCE",
+            "path": "/sap/opu/odata/sap/ZAPI_EMPLOYEE_DETAILS_SB"
           },
           "destinationOptions": {
             "selectionStrategy": "alwaysSubscriber",
@@ -110,8 +151,22 @@
             "selectionStrategy": "alwaysSubscriber",
             "useCache": true
           }
+        },
+        "[production]": {
+         "credentials": {
+            "destination": "MANAGEWORKFORCE",
+            "path": "/sap/opu/odata/sap/ZAPI_EMPLOYEE_DETAILS_SB"
+          },
+          "destinationOptions": {
+            "selectionStrategy": "alwaysSubscriber",
+            "useCache": true
+          }
         }
-      }
+      },
+      "workzone": true
     }
-  }
+  },
+  "sapux": [
+    "app/timesheetentry"
+  ]
 }
