@@ -64,6 +64,14 @@
                     "odataVersion": "2.0"
                 }
             },
+            "TimesheetPreviousService": {
+                "uri": "odata/v2/TimesheetPreviousService",
+                "type": "OData",
+                "settings": {
+                    "annotations": [],
+                    "odataVersion": "2.0"
+                }
+            },
             "ConfigurationJSON": {
                 "uri": "model/configFile.json",
                 "type": "JSON"
@@ -179,6 +187,16 @@
             },
             "TimesheetDeleteService": {
                 "dataSource": "TimesheetDeleteService",
+                "preload": true,
+                "settings": {
+                    "operationMode": "Server",
+                    "autoExpandSelect": true,
+                    "earlyRequests": true,
+                    "useBatch": false
+                }
+            },
+            "TimesheetPreviousService": {
+                "dataSource": "TimesheetPreviousService",
                 "preload": true,
                 "settings": {
                     "operationMode": "Server",

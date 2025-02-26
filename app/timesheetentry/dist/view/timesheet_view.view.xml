@@ -68,7 +68,7 @@
 							</Column>
 							<Column id="idcolumn3" width="auto" hAlign="Center" vAlign="Top" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Block" mergeDuplicates="false">
 								<header>
-									<Text id="idtext3" text="Wbs Element" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit"/>
+									<Text id="idtext3" text="Task type" width="auto" maxLines="1" wrapping="false" textAlign="Begin" textDirection="Inherit"/>
 								</header>
 								<footer/>
 							</Column>
@@ -184,7 +184,7 @@
                                                                                                 editable="false"
 							        />
 									<Text id="id_cell1" text="{= ${Timesheet>Project_1} !== '' ? ${Timesheet>ProjectDescription_1} !== '' ? ${Timesheet>Project_1} + ' ' + '(' + ${Timesheet>ProjectDescription_1} + ')' : ${Timesheet>Project_1} : '' }"/>
-									<Text id="id_cell3" text="{= ${Timesheet>WBSElementInternalID} !== '' ? ${Timesheet>WBSDescription} !== '' ? ${Timesheet>WBSElementInternalID} + ' ' + '(' + ${Timesheet>WBSDescription} + ')' : ${Timesheet>WBSElementInternalID} : ''	}"/>
+									<Text id="id_cell3" text="{= ${Timesheet>TimeSheetTaskType} !== '' ? ${Timesheet>TimeSheetTaskTypeText} !== '' ? ${Timesheet>TimeSheetTaskType} + ' ' + '(' + ${Timesheet>TimeSheetTaskTypeText} + ')' : ${Timesheet>TimeSheetTaskType} : ''	}"/>
 									<Text id="id_cell4" text="{= ${Timesheet>ReceiverCostCenter} !== '' ? ${Timesheet>ReceiverCostCenter} !== '' ? ${Timesheet>ReceiverCostCenter} + ' ' + '(' + ${Timesheet>ReceiverCostCenterDescription} + ')' : ${Timesheet>ReceiverCostCenter} : '' }"/>
                                     <Text id="id_cell5" text="{= ${Timesheet>SenderCostCenter} !== '' ? ${Timesheet>SenderCostCenterDescription} !== '' ? ${Timesheet>SenderCostCenter} + ' ' + '(' + ${Timesheet>SenderCostCenterDescription} + ')' : ${Timesheet>SenderCostCenter} : '' }"/>
                                     <Text id="id_cell6" text="{Timesheet>RecordedHours}"/>

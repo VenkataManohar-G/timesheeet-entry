@@ -25,12 +25,12 @@ sap.ui.define([
 ) => {
     "use strict";
     var oDialogCreate, i, addDefaultEntries = [], messageLogs = [], addEntriesLength = 0, savecount = 0, deletecount = 0, DateValue1, DateValue2, oOrderModel;
-    var oModel, oAddEntryModel, oEmployeeModel, oWbsModel, oTaskModel, oTimesheetModel, oWbsModelGlobal, oCompanyCodeModel, oTemplateModel, DateoModel, DateoModel1, oWbsModelData;
+    var oModel, oAddEntryModel, oEmployeeModel, oWbsModel, oTaskModel, oTimesheetModel, oTemplateModel, oWbsModelGlobal, oCompanyCodeModel, oTemplateModel, DateoModel, DateoModel1, oWbsModelData;
     var MessageType = coreLibrary.MessageType, DialogType = mobileLibrary.DialogType, ButtonType = mobileLibrary.ButtonType;
-    var oBusyDialogAdd, oBusyDialogoWbs, oBusyDialogDeleteAll,oBusyDialogPrevious, oWbsInput, oEmployeeExtId, oEmployeeInternalId, oEmployeePersonId, oUserEmail, addCompanyCode, addCompanyCodeName, addWorkAgreement, messagaoDialog;
+    var oBusyDialogAdd, oBusyDialogoWbs, oBusyDialogDeleteAll, oBusyDialogPrevious, oWbsInput, oEmployeeExtId, oEmployeeInternalId, oEmployeePersonId, oUserEmail, addCompanyCode, addCompanyCodeName, addWorkAgreement, messagaoDialog;
     var ValueState = coreLibrary.ValueState, EdmType = exportLibrary.EdmType;
-    var messageLogModel = new sap.ui.model.json.JSONModel();
-    var oFromDate,oToDate;
+    var messageLogModel = new sap.ui.model.json.JSONModel(), GetTemplatesModel = new sap.ui.model.json.JSONModel();
+    var oFromDate, oToDate;
     return Controller.extend("timesheetentry.controller.timesheet_view", {
         formatWbsElement: function (value) {
             var Wbsstring, Wbsfinal;
@@ -512,11 +512,13 @@ sap.ui.define([
             this.getView().byId("id_dialogaddentries").close();
             this.getView().byId("id_add_entrysave").setEnabled(false);
             this.getView().byId("id_add_entry_submit").setEnabled(false);
+            this.getView().byId("id_add_entrytemplate").setEnabled(false);
             this.getView().byId("id_templatecombo").setSelectedKey("");
         },
         handleDateChangeadd_entries: function (oEvent) {
             var oSaveBtn = this.getView().byId("id_add_entrysave");
             var oSubmitBtn = this.getView().byId("id_add_entry_submit");
+            var oSaveTemplate = this.getView().byId("id_add_entrytemplate");
             var that = this;
             var oRangeDate = [],
                 sFrom = oEvent.getParameter("from"),
@@ -536,6 +538,7 @@ sap.ui.define([
                         oEventSource.setValueStateText("Date Range should be with in 7 days");
                         oSaveBtn.setEnabled(false);
                         oSubmitBtn.setEnabled(false);
+                        oSaveTemplate.setEnabled(true);
                     } else {
                         if (diff === 6) {
                             var ostartDate = new Date(DateValue1);
@@ -547,6 +550,7 @@ sap.ui.define([
                                 oEventSource.setValueStateText("Date Range should start Week Days(Saturday - Friday)");
                                 oSaveBtn.setEnabled(false);
                                 oSubmitBtn.setEnabled(false);
+                                oSaveTemplate.setEnabled(true);
                             }
                         } else if (diff <= 5) {
                             var ostartDate = new Date(DateValue1);
@@ -618,6 +622,7 @@ sap.ui.define([
                             oEventSource.setValueStateText("");
                             oSaveBtn.setEnabled(false);
                             oSubmitBtn.setEnabled(false);
+                            oSaveTemplate.setEnabled(false);
                         }
 
                     }
@@ -704,6 +709,7 @@ sap.ui.define([
             var odateConv = new Date(odateValue);
             var oSaveBtn = this.getView().byId("id_add_entrysave");
             var oSubmitBtn = this.getView().byId("id_add_entry_submit");
+            var oTemplteBtn = this.getView().byId("id_add_entrytemplate");
             var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
                 pattern: "yyyy-MM-dd"
             });
@@ -717,16 +723,19 @@ sap.ui.define([
                 odateSource.setValueStateText("");
                 oSaveBtn.setEnabled(true);
                 oSubmitBtn.setEnabled(true);
+                oTemplteBtn.setEnabled(true);
             } else {
                 odateSource.setValueState(ValueState.Error);
                 odateSource.setValueStateText("Date should be in the selected Time Period");
                 oSaveBtn.setEnabled(false);
                 oSubmitBtn.setEnabled(false);
+                oTemplteBtn.setEnabled(false);
             }
         },
         taskChange: function (oEvent) {
             var oSaveBtn = this.getView().byId("id_add_entrysave");
             var oSubmitBtn = this.getView().byId("id_add_entry_submit");
+            var oTemplteBtn = this.getView().byId("id_add_entrytemplate");
             var oValidatedComboBox = oEvent.getSource(),
                 sSelectedKey = oValidatedComboBox.getSelectedKey(),
                 sValue = oValidatedComboBox.getValue();
@@ -735,15 +744,18 @@ sap.ui.define([
                 oValidatedComboBox.setValueStateText("Please enter a valid Task Type");
                 oSaveBtn.setEnabled(false);
                 oSubmitBtn.setEnabled(false);
+                oTemplteBtn.setEnabled(false);
             } else {
                 oValidatedComboBox.setValueState(ValueState.None);
                 oSaveBtn.setEnabled(true);
                 oSubmitBtn.setEnabled(true);
+                oTemplteBtn.setEnabled(true);
             }
         },
         wbsChange: function (oEvent) {
             var oSaveBtn = this.getView().byId("id_add_entrysave");
             var oSubmitBtn = this.getView().byId("id_add_entry_submit");
+            var oTemplteBtn = this.getView().byId("id_add_entrytemplate");
             var oValidatedComboBox = oEvent.getSource(),
                 sSelectedKey = oValidatedComboBox.getSelectedKey(),
                 sValue = oValidatedComboBox.getValue();
@@ -752,10 +764,12 @@ sap.ui.define([
                 oValidatedComboBox.setValueStateText("Please enter a valid WBS Element");
                 oSaveBtn.setEnabled(false);
                 oSubmitBtn.setEnabled(false);
+                oTemplteBtn.setEnabled(false);
             } else {
                 oValidatedComboBox.setValueState(ValueState.None);
                 oSaveBtn.setEnabled(true);
                 oSubmitBtn.setEnabled(true);
+                oTemplteBtn.setEnabled(true);
             }
         },
         getWbsElement: function (oExternalId, currentDateVal, employeefilterVal) {
@@ -932,6 +946,7 @@ sap.ui.define([
         onValueHelpWbsVHOkPress: function (oEvent) {
             var oSaveBtn = this.getView().byId("id_add_entrysave");
             var oSubmitBtn = this.getView().byId("id_add_entry_submit");
+            var oTemplteBtn = this.getView().byId("id_add_entrytemplate");
             var aTokens = oEvent.getParameter("tokens");
             if (aTokens.length > 0) {
                 var oText = aTokens[0].getKey();
@@ -942,6 +957,7 @@ sap.ui.define([
                 oWbsInput.setValueStateText("");
                 oSaveBtn.setEnabled(true);
                 oSubmitBtn.setEnabled(true);
+                oTemplteBtn.setEnabled(true);
                 //console.log(oselectedData.WorkPackage);
             }
             this._oVHDWithSuggestionsWbs.close();
@@ -1583,8 +1599,9 @@ sap.ui.define([
                 that = this,
                 oEmployeeId = this.byId("id_add_employee_extid").getText(),
                 oPreviousModel = this.getOwnerComponent().getModel("TimesheetPreviousService"),
+                oTemplateModel = this.getOwnerComponent().getModel("SavetemplateService"),
                 filterUser = new sap.ui.model.Filter("PersonWorkAgreementExternalID", "EQ", oEmployeeId);
-                oFilter.push(filterUser);
+            oFilter.push(filterUser);
             if (sSelectedKey == '1') {
                 oBusyDialogPrevious = new sap.m.BusyDialog({
                     title: "loading Previous Timecard",
@@ -1593,25 +1610,25 @@ sap.ui.define([
                 oBusyDialogPrevious.open();
                 var oPreviousdate = new Date(new Date().getTime() - 604800000);
                 that._getdates(oPreviousdate);
-                if(oFromDate && oToDate){
+                if (oFromDate && oToDate) {
                     var oDateRange = oFromDate + 'T00:00:00Z';
                     var oDateRangeto = oToDate + 'T23:59:59Z';
                     var CreatedAtFilter = new sap.ui.model.Filter("TimeSheetDate", "BT", oDateRange, oDateRangeto);
                     oFilter.push(CreatedAtFilter);
                 }
-                let result = await that._getpreviousdata(oPreviousModel,oFilter);
-                if(result.length > 0){
+                let result = await that._getpreviousdata(oPreviousModel, oFilter);
+                if (result.length > 0) {
                     var oCurrentdate = new Date();
                     oAddEntryModel = new sap.ui.model.json.JSONModel();
                     that._getdates(oCurrentdate);
-                    let dateJsonData = that._getDateRange(oFromDate,oToDate);
-                    if(dateJsonData){
+                    let dateJsonData = that._getDateRange(oFromDate, oToDate);
+                    if (dateJsonData) {
                         console.log(dateJsonData);
                         addDefaultEntries = [];
-                        for(i=0;i<result.length;i++){
+                        for (i = 0; i < result.length; i++) {
                             console.log(new Date(result[i].TimeSheetDate));
-                            let filteredDates = dateJsonData.filter(function(item) {
-                                return item.Day === new Date(result[i].TimeSheetDate).getDay(); 
+                            let filteredDates = dateJsonData.filter(function (item) {
+                                return item.Day === new Date(result[i].TimeSheetDate).getDay();
                             });
                             console.log(filteredDates[0].Date);
                             var addDefaultEntry = {};
@@ -1623,7 +1640,7 @@ sap.ui.define([
                             addDefaultEntry.RecordedQuantity = result[i].RecordedHours;
                             addDefaultEntries.push(addDefaultEntry);
                         }
-                        addDefaultEntries.sort(function(a, b) {
+                        addDefaultEntries.sort(function (a, b) {
                             var dateA = new Date(a.TimesheetDate);
                             var dateB = new Date(b.TimesheetDate);
                             return dateA - dateB;
@@ -1634,7 +1651,48 @@ sap.ui.define([
                         oBusyDialogPrevious.close();
                         this.getView().byId("id_add_entrysave").setEnabled(true);
                         this.getView().byId("id_add_entry_submit").setEnabled(true);
+                        this.getView().byId("id_add_entrytemplate").setEnabled(false);
                     }
+                }
+            } else if (sSelectedKey == '2') {
+                var oExternalId = this.getView().byId("id_employee_extid").getText(),
+                    oView = this.getView();
+                let oGetTemplates = await that._getTemplates(oTemplateModel, oExternalId);
+                if (oGetTemplates) {
+                    GetTemplatesModel.setData(oGetTemplates);
+                    GetTemplatesModel.refresh();
+                    that.getView().setModel(GetTemplatesModel, "AllTemplates");
+                    if (!this._pValueHelpDialog) {
+                        this._pValueHelpDialog = Fragment.load({
+                            id: oView.getId(),
+                            name: "timesheetentry.view.GetTemplates",
+                            controller: this
+                        }).then(function (oDialog) {
+                            oView.addDependent(oDialog);
+                            return oDialog;
+                        });
+                    }
+                    this._pValueHelpDialog.then(function (oDialog) {
+                        // Create a filter for the binding
+                            oDialog.open();
+                    });
+                } else {
+                    GetTemplatesModel.setData(oGetTemplates);
+                    GetTemplatesModel.refresh();
+                    that.getView().setModel(GetTemplatesModel, "AllTemplates");
+                    if (!this._pValueHelpDialog) {
+                        this._pValueHelpDialog = Fragment.load({
+                            id: oView.getId(),
+                            name: "timesheetentry.view.GetTemplates",
+                            controller: this
+                        }).then(function (oDialog) {
+                            oView.addDependent(oDialog);
+                            return oDialog;
+                        });
+                    }
+                    this._pValueHelpDialog.then(function (oDialog) {
+                            oDialog.open();
+                    });
                 }
             }
         },
@@ -1653,10 +1711,10 @@ sap.ui.define([
                 });
             });
         },
-        _getdates: function(oDate){
+        _getdates: function (oDate) {
             var ostartDate = new Date(oDate);
             var ostartDay = ostartDate.getDay();
-            var sFromDate,sToDate;
+            var sFromDate, sToDate;
             var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
                 pattern: "yyyy-MM-dd"
             });
@@ -1697,23 +1755,23 @@ sap.ui.define([
                 oToDate = oDateFormat.format(sToDate);
             }
         },
-        _getDateRange : function(oFrom,oTodata){
+        _getDateRange: function (oFrom, oTodata) {
             var next = 0,
-                datesArray= [],
+                datesArray = [],
                 newDate;
             var dates = {};
             dates.Date = new Date(oFrom);
-            dates.Day  = new Date(oFrom).getDay();
+            dates.Day = new Date(oFrom).getDay();
             datesArray.push(dates);
             do {
                 let dates = {};
-                if(next == 0){
+                if (next == 0) {
                     newDate = new Date(new Date(oFrom).getTime() + 86400000);
-                }else{
+                } else {
                     newDate = new Date(newDate.getTime() + 86400000);
                 }
                 dates.Date = newDate;
-                dates.Day  = newDate.getDay();
+                dates.Day = newDate.getDay();
                 datesArray.push(dates);
                 next++;
             } while (next < 5);
@@ -1723,6 +1781,183 @@ sap.ui.define([
             dates.Day = new Date(oTodata).getDay();
             datesArray.push(dates)
             return datesArray;
+        },
+        ontemplateDialog: async function () {
+            var oDialogTemplate = this.byId("id_dialogtemplateentries");
+            if (!oDialogTemplate) {
+                oDialogTemplate = new sap.ui.xmlfragment(this.getView().getId(), "timesheetentry.view.SaveTemplate", this);
+                this.getView().addDependent(oDialogTemplate);
+                oDialogTemplate.open();
+            }else{
+                oDialogTemplate.open();
+            }
+        },
+        _saveTemplate: function (oModel, entries) {
+            return new Promise((resolve, reject) => {
+                oModel.create("/SaveTemplate", { entries }, {
+                    success: function (data, response) {
+                        if (response.statusCode == '201') {
+                            resolve(response);
+                        }
+                    }.bind(this),
+                    error: function (error) {
+                        var errorLog = JSON.parse(error.responseText);
+                        reject(errorLog);
+                    }.bind(this)
+                });
+            });
+        },
+        _getTemplates: function (oModel, oExternalId) {
+            return new Promise((resolve, reject) => {
+                oModel.callFunction("/GetTemplates", {
+                    method: "GET",
+                    urlParameters: { "EmployeeExternalId": oExternalId },
+                    success: function (oData) {
+                        var aTemplates = oData.results;
+                        console.log(aTemplates);
+                        if (aTemplates.length > 0) {
+                            resolve(aTemplates);
+                        } else {
+                            resolve(aTemplates);
+                        }
+                    },
+                    error: function (oError) {
+                        reject(oError);
+                    }
+                });
+            });
+        },
+        ongettemplateSearch: function(oEvent){
+            var sValue = oEvent.getParameter("value");
+			var oFilter = new Filter("TemplateDescription", FilterOperator.Contains, sValue);
+			var oBinding = oEvent.getParameter("itemsBinding");
+			oBinding.filter([oFilter]);
+        },
+        ongettemplateClose: async function(oEvent){
+            var oTemplateModel = this.getOwnerComponent().getModel("SavetemplateService"),
+                that = this,
+                oCurrentdate = new Date(),
+                oSelectedItem = oEvent.getParameter("selectedItem");
+            if (oSelectedItem) {
+                var oValue = oSelectedItem.getDescription();
+                var oTemplateData = await that._getTemplate(oTemplateModel,oValue);
+                if(oTemplateData.length > 0){
+                    oAddEntryModel = new sap.ui.model.json.JSONModel();
+                    that._getdates(oCurrentdate);
+                    let dateJsonData = that._getDateRange(oFromDate, oToDate);
+                    addDefaultEntries = [];
+                    for (i = 0; i < oTemplateData.length; i++) {
+                        console.log(new Date(oTemplateData[i].Date));
+                        let filteredDates = dateJsonData.filter(function (item) {
+                            return item.Day === oTemplateData[i].Day;
+                        });
+                        console.log(filteredDates[0].Date);
+                        var addDefaultEntry = {};
+                        addDefaultEntry.Id = i;
+                        addDefaultEntry.TimesheetDate = filteredDates[0].Date;
+                        addDefaultEntry.TaskType = oTemplateData[i].TaskType;
+                        addDefaultEntry.WBSElemt = oTemplateData[i].WBSElement;
+                        addDefaultEntry.RecordedHours = oTemplateData[i].RecordedHours;
+                        addDefaultEntry.RecordedQuantity = oTemplateData[i].RecordedHours;
+                        addDefaultEntries.push(addDefaultEntry);
+                    }
+                    addDefaultEntries.sort(function (a, b) {
+                        var dateA = new Date(a.TimesheetDate);
+                        var dateB = new Date(b.TimesheetDate);
+                        return dateA - dateB;
+                    });
+                    oAddEntryModel.setData(addDefaultEntries);
+                    that.getView().setModel(oAddEntryModel, "Entries");
+                    oAddEntryModel.refresh(true);
+                    this.getView().byId("id_add_entrysave").setEnabled(true);
+                    this.getView().byId("id_add_entry_submit").setEnabled(true);
+                    this.getView().byId("id_add_entrytemplate").setEnabled(false);
+                }
+            }
+        },
+        _getTemplate: function (oModel, oTemplateId) {
+            return new Promise((resolve, reject) => {
+                oModel.callFunction("/GetTemplate", {
+                    method: "GET",
+                    urlParameters: { "TemplateId": oTemplateId },
+                    success: function (oData) {
+                        var aTemplate = oData.results;
+                        console.log(aTemplate);
+                        if (aTemplate.length > 0) {
+                            resolve(aTemplate);
+                        } else {
+                            resolve(aTemplate);
+                        }
+                    },
+                    error: function (oError) {
+                        reject(oError);
+                    }
+                });
+            });
+        },
+        ontemplatesaveDialog: async function(){
+            var that;
+            that = this;
+            var oViewPage = that.getView();
+            oTemplateModel = this.getOwnerComponent().getModel("SavetemplateService");
+            oBusyDialogAdd = new sap.m.BusyDialog({
+                title: "Saving",
+                text: "Please wait....."
+            });
+            oBusyDialogAdd.open();
+            var oListData = [];
+            var oTemplateEntries = [];
+            var oMsgButton = this.byId("id_alert");
+            var oMessageManager = sap.ui.getCore().getMessageManager();
+            oViewPage.setModel(oMessageManager.getMessageModel(), "message");
+            sap.ui.getCore().getMessageManager().removeAllMessages();
+            var oEmpExtValueadd = this.byId("id_add_employee_extid");
+            var sTemplateId = this.getView().byId("id_templateid_save");
+            var sTemplateDesc = this.getView().byId("id_templatedesc_save");
+            var RecordTable = this.getView().byId("tableId1");
+            var newEntries = RecordTable.getBinding("items");
+            oListData = newEntries.oList;
+            var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+                pattern: "yyyy-MM-dd"
+            });
+            var oCheck = this._entriesValidations(oListData);
+            if (oCheck === false) {
+                for (let i = 0; i < oListData.length; i++) {
+                    if ((oListData[i].TimesheetDate == null || oListData[i].TimesheetDate == '') &&
+                        (oListData[i].RecordedHours == null || oListData[i].RecordedHours == '' || oListData[i].RecordedHours == '0') &&
+                        ((oListData[i].TaskType == null && oListData[i].WBSElemt == null) || (oListData[i].TaskType == '' && oListData[i].WBSElemt == ''))
+                    ) {
+                        continue;
+                    } else {
+                        var TemplateData = {};
+                        TemplateData.EmployeeExternalId = oEmpExtValueadd.getText();
+                        TemplateData.TemplateId = sTemplateId.getValue();
+                        TemplateData.TemplateDescription = sTemplateDesc.getValue();
+                        var startdate = oDateFormat.format(oListData[i].TimesheetDate);
+                        TemplateData.Date = startdate;
+                        TemplateData.RecordedHours = oListData[i].RecordedHours;
+                        TemplateData.WBSElement = oListData[i].WBSElemt;
+                        TemplateData.TaskType = oListData[i].TaskType;
+                        TemplateData.Day = new Date(startdate).getDay();
+                        oTemplateEntries.push(TemplateData);
+                    }
+                }
+                let result = await that._saveTemplate(oTemplateModel, oTemplateEntries);
+            } else {
+                var oMessage = new Message({
+                    message: "Fill all the details- Employee External Id,Person Worker Agreement ID,Company Code,Task Type/WBS Element, Recorded Hours",
+                    type: MessageType.Error,
+                    target: "/Dummy",
+                    processor: this.getView().getModel()
+                });
+                oMsgButton.setIcon("sap-icon://error");
+                oMsgButton.setType("Reject");
+                sap.ui.getCore().getMessageManager().addMessages(oMessage);
+                oBusyDialogAdd.close();
+            }
+        },
+        onCloseDialogtemplate: function(){
+            this.getView().byId("id_dialogtemplateentries").close();
         }
     });
 });

@@ -45,6 +45,21 @@
           "destination": "MANAGEWORKFORCE",
           "path": "/sap/opu/odata/sap/ZAPI_EMPLOYEE_DETAILS_SB"
         }
+      },
+      "db": {
+        "binding": {
+          "type": "cf",
+          "apiEndpoint": "https://api.cf.us10.hana.ondemand.com",
+          "org": "The Hackett Group d-b-a Answerthink, Inc._at-development-hgv7q18y",
+          "space": "Atdev",
+          "instance": "timesheetentry-db",
+          "key": "timesheetentry-db-key",
+          "resolved": false
+        },
+        "kind": "hana",
+        "vcap": {
+          "name": "db"
+        }
       }
     }
   }

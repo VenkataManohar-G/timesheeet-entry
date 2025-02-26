@@ -162,9 +162,10 @@
                         type="Emphasized"
                         press="onMessagePopoverPress" />
                     <ToolbarSpacer id="id_toolbar1123"/>
-                    <Button id="id_add_entrysave" icon="sap-icon://save" type="Emphasized" text="{i18n>dialogsaveButtonText}" press="onsaveDialog" enabled="false"/>
-                    <Button id="id_add_entry_submit" type="Success" text="{i18n>dialogsubmitButtonText}" press="onsubmitDialog" enabled="false"/>
-                    <Button id="id_add_entry_close" type="Reject" text="{i18n>dialogCancelButtonText}" press="onCloseDialog"/>
+					<Button id="id_add_entrytemplate" icon="sap-icon://save" type="Emphasized" text="{i18n>dialogtemplateButtonText}" press="ontemplateDialog" enabled="false"/>
+                    <Button id="id_add_entrysave" icon="sap-icon://accept" type="Emphasized" text="{i18n>dialogsaveButtonText}" press="onsaveDialog" enabled="false"/>
+                    <Button id="id_add_entry_submit" icon="sap-icon://create-entry-time" type="Success" text="{i18n>dialogsubmitButtonText}" press="onsubmitDialog" enabled="false"/>
+                    <Button id="id_add_entry_close" icon="sap-icon://sys-cancel" type="Reject" text="{i18n>dialogCancelButtonText}" press="onCloseDialog"/>
                 </content>
             </Toolbar>
         </footer>			

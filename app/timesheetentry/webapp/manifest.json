@@ -72,6 +72,14 @@
           "odataVersion": "2.0"
         }
       },
+      "SavetemplateService": {
+        "uri": "odata/v2/SavetemplateService/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "2.0"
+        }
+      },
       "ConfigurationJSON": {
         "uri": "model/configFile.json",
         "type": "JSON"
@@ -203,6 +211,15 @@
           "autoExpandSelect": true,
           "earlyRequests": true,
           "useBatch": false
+        }
+      },
+      "SavetemplateService": {
+        "dataSource": "SavetemplateService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
         }
       },
       "configurationModel": {

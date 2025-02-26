@@ -11,9 +11,10 @@
     "@sap-cloud-sdk/generator": "^3.23.0",
     "@sap-cloud-sdk/odata-v2": "^3.23.0",
     "@sap/cds": "^8",
+    "@sap/hana-client": "^2.23.27",
+    "@sap/xssec": "^4",
     "chai": "^5.1.2",
-    "express": "^4",
-    "@sap/xssec": "^4"
+    "express": "^4"
   },
   "devDependencies": {
     "@cap-js/cds-types": "^0.7.0",
@@ -153,7 +154,7 @@
           }
         },
         "[production]": {
-         "credentials": {
+          "credentials": {
             "destination": "MANAGEWORKFORCE",
             "path": "/sap/opu/odata/sap/ZAPI_EMPLOYEE_DETAILS_SB"
           },
@@ -163,7 +164,10 @@
           }
         }
       },
-      "workzone": true
+      "workzone": true,
+      "db": {
+        "kind": "hana"
+      }
     }
   },
   "sapux": [

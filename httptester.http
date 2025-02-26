@@ -1,0 +1,16 @@
+POST http://localhost:4004/odata/v2/SavetemplateService/SaveTemplate
+Content-Type: application/json
+ 
+{
+    "entries": [
+        {
+            "TemplateId": "template001",
+            "TemplateDescription":"Template Description",
+            "EmployeeExternalId": "EMP123",
+            "Date": "2025-02-04",
+            "WBSElement": "W01",
+            "TaskType": "DEV",
+            "RecordedHours": 8.0
+        }
+    ]
+}
