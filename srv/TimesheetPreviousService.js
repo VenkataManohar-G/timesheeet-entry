@@ -7,7 +7,7 @@ var oDatestart;
 var oDateEnd;
 var hours;
 module.exports = cds.service.impl(async function (srv) {
-    const { MyTimesheetDetails } = this.entities;
+    const { MyTimesheetPreviousDetails } = this.entities;
     const getAllTimesheetdetails = async function (req) {
         const { yy1TimesheetdetailsCds } = require('./src/generated/YY1_TIMESHEETDETAILS_CDS');
         const { yy1_TimesheetdetailsApi } = yy1TimesheetdetailsCds();
@@ -17,14 +17,15 @@ module.exports = cds.service.impl(async function (srv) {
             and(yy1_TimesheetdetailsApi.schema.PERSON_WORK_AGREEMENT_EXTERNAL_ID.equals(oEmployee),
                 and(yy1_TimesheetdetailsApi.schema.TIME_SHEET_DATE.lessOrEqual(oDateEnd),
                     yy1_TimesheetdetailsApi.schema.TIME_SHEET_DATE.greaterOrEqual(oDatestart)),
-                and(yy1_TimesheetdetailsApi.schema.RECORDED_HOURS.notEquals(0.00)))
+                and(yy1_TimesheetdetailsApi.schema.RECORDED_HOURS.notEquals(0.00)),
+                and(yy1_TimesheetdetailsApi.schema.TIME_SHEET_STATUS.notEquals("60")))
         ).execute({
             destinationName: 'MANAGEWORKFORCE'
         });
         return Timesheetdetails;
     }
 
-    srv.on('READ', MyTimesheetDetails, async (req) => {
+    srv.on('READ', MyTimesheetPreviousDetails, async (req) => {
         const aFilter = req.query.SELECT.where;
         const filterparameter1 = aFilter[2].val;
         const aFilterDate = aFilter[4];
@@ -62,7 +63,6 @@ module.exports = cds.service.impl(async function (srv) {
                     record.ApprovedByName = element.approvedByName;
                     record.TimeSheetTaskComponent = element.timeSheetTaskComponent;
                     record.TimeSheetTaskType = element.timeSheetTaskType;
-                    record.TimeSheetTaskTypeText = element.timeSheetTaskTypeText
                     record.TimeSheetTaskLevel = element.timeSheetTaskLevel;
                     record.ControllingArea = element.controllingArea;
                     record.CompanyCode = element.companyCode;

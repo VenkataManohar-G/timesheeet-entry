@@ -27,9 +27,10 @@ sap.ui.define([
     var oDialogCreate, i, addDefaultEntries = [], messageLogs = [], addEntriesLength = 0, savecount = 0, deletecount = 0, DateValue1, DateValue2, oOrderModel;
     var oModel, oAddEntryModel, oEmployeeModel, oWbsModel, oTaskModel, oTimesheetModel, oWbsModelGlobal, oCompanyCodeModel, oTemplateModel, DateoModel, DateoModel1, oWbsModelData;
     var MessageType = coreLibrary.MessageType, DialogType = mobileLibrary.DialogType, ButtonType = mobileLibrary.ButtonType;
-    var oBusyDialogAdd, oBusyDialogoWbs, oBusyDialogDeleteAll, oWbsInput, oEmployeeExtId, oEmployeeInternalId, oEmployeePersonId, oUserEmail, addCompanyCode, addCompanyCodeName, addWorkAgreement, messagaoDialog;
+    var oBusyDialogAdd, oBusyDialogoWbs, oBusyDialogDeleteAll,oBusyDialogPrevious, oWbsInput, oEmployeeExtId, oEmployeeInternalId, oEmployeePersonId, oUserEmail, addCompanyCode, addCompanyCodeName, addWorkAgreement, messagaoDialog;
     var ValueState = coreLibrary.ValueState, EdmType = exportLibrary.EdmType;
     var messageLogModel = new sap.ui.model.json.JSONModel();
+    var oFromDate,oToDate;
     return Controller.extend("timesheetentry.controller.timesheet_view", {
         formatWbsElement: function (value) {
             var Wbsstring, Wbsfinal;
@@ -511,6 +512,7 @@ sap.ui.define([
             this.getView().byId("id_dialogaddentries").close();
             this.getView().byId("id_add_entrysave").setEnabled(false);
             this.getView().byId("id_add_entry_submit").setEnabled(false);
+            this.getView().byId("id_templatecombo").setSelectedKey("");
         },
         handleDateChangeadd_entries: function (oEvent) {
             var oSaveBtn = this.getView().byId("id_add_entrysave");
@@ -1317,12 +1319,12 @@ sap.ui.define([
                     TimesheetData.TimeSheetDataFields_HoursUnitOfMeasure = 'H';
                     oRecordEntries[i] = TimesheetData;
                     let result = await that._deleteallrecords(oModelDeleteAll, oRecordEntries[i]);
-                    
+
                 }
                 that._logmessageError();
             }
         },
-        _deleteallrecords: function(oModelEntry, oRecordEntry){
+        _deleteallrecords: function (oModelEntry, oRecordEntry) {
             return new Promise((resolve, reject) => {
                 oModelEntry.create("/MyTimesheetDelete", oRecordEntry, {
                     success: function (data, response) {
@@ -1359,7 +1361,7 @@ sap.ui.define([
             });
             this.oLogMessagedeleteAllDialog.open();
         },
-        onsaveDialog: async function(oEvent){
+        onsaveDialog: async function (oEvent) {
             var that;
             that = this;
             var oViewPage = that.getView();
@@ -1527,7 +1529,7 @@ sap.ui.define([
             }
             return this._pMessagePopover;
         },
-        onupdatesubmit: async function(){
+        onupdatesubmit: async function () {
             oBusyDialogDeleteAll = new sap.m.BusyDialog({
                 title: "Processing Submission of Records",
                 text: "Please wait....."
@@ -1573,6 +1575,154 @@ sap.ui.define([
                 }
                 that._logmessageError();
             }
+        },
+        templateChange: async function (oEvent) {
+            var oValidatedComboBox = oEvent.getSource(),
+                sSelectedKey = oValidatedComboBox.getSelectedKey(),
+                oFilter = [],
+                that = this,
+                oEmployeeId = this.byId("id_add_employee_extid").getText(),
+                oPreviousModel = this.getOwnerComponent().getModel("TimesheetPreviousService"),
+                filterUser = new sap.ui.model.Filter("PersonWorkAgreementExternalID", "EQ", oEmployeeId);
+                oFilter.push(filterUser);
+            if (sSelectedKey == '1') {
+                oBusyDialogPrevious = new sap.m.BusyDialog({
+                    title: "loading Previous Timecard",
+                    text: "Please wait....."
+                });
+                oBusyDialogPrevious.open();
+                var oPreviousdate = new Date(new Date().getTime() - 604800000);
+                that._getdates(oPreviousdate);
+                if(oFromDate && oToDate){
+                    var oDateRange = oFromDate + 'T00:00:00Z';
+                    var oDateRangeto = oToDate + 'T23:59:59Z';
+                    var CreatedAtFilter = new sap.ui.model.Filter("TimeSheetDate", "BT", oDateRange, oDateRangeto);
+                    oFilter.push(CreatedAtFilter);
+                }
+                let result = await that._getpreviousdata(oPreviousModel,oFilter);
+                if(result.length > 0){
+                    var oCurrentdate = new Date();
+                    oAddEntryModel = new sap.ui.model.json.JSONModel();
+                    that._getdates(oCurrentdate);
+                    let dateJsonData = that._getDateRange(oFromDate,oToDate);
+                    if(dateJsonData){
+                        console.log(dateJsonData);
+                        addDefaultEntries = [];
+                        for(i=0;i<result.length;i++){
+                            console.log(new Date(result[i].TimeSheetDate));
+                            let filteredDates = dateJsonData.filter(function(item) {
+                                return item.Day === new Date(result[i].TimeSheetDate).getDay(); 
+                            });
+                            console.log(filteredDates[0].Date);
+                            var addDefaultEntry = {};
+                            addDefaultEntry.Id = i;
+                            addDefaultEntry.TimesheetDate = filteredDates[0].Date;
+                            addDefaultEntry.TaskType = result[i].TimeSheetTaskType;
+                            addDefaultEntry.WBSElemt = '';
+                            addDefaultEntry.RecordedHours = result[i].RecordedHours;
+                            addDefaultEntry.RecordedQuantity = result[i].RecordedHours;
+                            addDefaultEntries.push(addDefaultEntry);
+                        }
+                        addDefaultEntries.sort(function(a, b) {
+                            var dateA = new Date(a.TimesheetDate);
+                            var dateB = new Date(b.TimesheetDate);
+                            return dateA - dateB;
+                        });
+                        oAddEntryModel.setData(addDefaultEntries);
+                        that.getView().setModel(oAddEntryModel, "Entries");
+                        oAddEntryModel.refresh(true);
+                        oBusyDialogPrevious.close();
+                        this.getView().byId("id_add_entrysave").setEnabled(true);
+                        this.getView().byId("id_add_entry_submit").setEnabled(true);
+                    }
+                }
+            }
+        },
+        _getpreviousdata: async function (oModelEntry, oFilter) {
+            return new Promise((resolve, reject) => {
+                oModelEntry.read("/MyTimesheetPreviousDetails", {
+                    filters: oFilter,
+                    urlParameters: { "$top": 999999 },
+                    success: function (response) {
+                        console.log(response.results);
+                        resolve(response.results);
+                    }.bind(this),
+                    error: function (error) {
+                        console.log(error);
+                    }.bind(this)
+                });
+            });
+        },
+        _getdates: function(oDate){
+            var ostartDate = new Date(oDate);
+            var ostartDay = ostartDate.getDay();
+            var sFromDate,sToDate;
+            var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+                pattern: "yyyy-MM-dd"
+            });
+            if (ostartDay === 6) {
+                sFromDate = ostartDate;
+                sToDate = new Date(new Date(ostartDate).getTime() + 518400000);
+                oFromDate = oDateFormat.format(sFromDate);
+                oToDate = oDateFormat.format(sToDate);
+            } else if (ostartDay === 5) {
+                sFromDate = new Date(new Date(ostartDate).getTime() - 518400000);
+                sToDate = ostartDate;
+                oFromDate = oDateFormat.format(sFromDate);
+                oToDate = oDateFormat.format(sToDate);
+            } else if (ostartDay === 4) {
+                sFromDate = new Date(new Date(ostartDate).getTime() - 432000000);
+                sToDate = new Date(new Date(ostartDate).getTime() + 86400000);
+                oFromDate = oDateFormat.format(sFromDate);
+                oToDate = oDateFormat.format(sToDate);
+            } else if (ostartDay === 3) {
+                sFromDate = new Date(new Date(ostartDate).getTime() - 345600000);
+                sToDate = new Date(new Date(ostartDate).getTime() + 172800000);
+                oFromDate = oDateFormat.format(sFromDate);
+                oToDate = oDateFormat.format(sToDate);
+            } else if (ostartDay === 2) {
+                sFromDate = new Date(new Date(ostartDate).getTime() - 259200000);
+                sToDate = new Date(new Date(ostartDate).getTime() + 259200000);
+                oFromDate = oDateFormat.format(sFromDate);
+                oToDate = oDateFormat.format(sToDate);
+            } else if (ostartDay === 1) {
+                sFromDate = new Date(new Date(ostartDate).getTime() - 172800000);
+                sToDate = new Date(new Date(ostartDate).getTime() + 345600000);
+                oFromDate = oDateFormat.format(sFromDate);
+                oToDate = oDateFormat.format(sToDate);
+            } else if (ostartDay === 0) {
+                sFromDate = new Date(new Date(ostartDate).getTime() - 86400000);
+                sToDate = new Date(new Date(ostartDate).getTime() + 432000000);
+                oFromDate = oDateFormat.format(sFromDate);
+                oToDate = oDateFormat.format(sToDate);
+            }
+        },
+        _getDateRange : function(oFrom,oTodata){
+            var next = 0,
+                datesArray= [],
+                newDate;
+            var dates = {};
+            dates.Date = new Date(oFrom);
+            dates.Day  = new Date(oFrom).getDay();
+            datesArray.push(dates);
+            do {
+                let dates = {};
+                if(next == 0){
+                    newDate = new Date(new Date(oFrom).getTime() + 86400000);
+                }else{
+                    newDate = new Date(newDate.getTime() + 86400000);
+                }
+                dates.Date = newDate;
+                dates.Day  = newDate.getDay();
+                datesArray.push(dates);
+                next++;
+            } while (next < 5);
+
+            var dates = {};
+            dates.Date = new Date(oTodata);
+            dates.Day = new Date(oTodata).getDay();
+            datesArray.push(dates)
+            return datesArray;
         }
     });
 });

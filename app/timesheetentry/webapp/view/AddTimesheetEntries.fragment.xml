@@ -67,10 +67,10 @@
 									<Title id="id_title" text="" level="H2"/>
 									<ToolbarSpacer id="id_toolbar1"/>
 									<ComboBox id="id_templatecombo"
-														showSecondaryValues="true"
+														showSecondaryValues="false"
 														filterSecondaryValues= "true"
 														change="templateChange"
-														selectedKey="{Template>Card}"
+														selectedKey="{Card}"
 														placeholder="Select Template"
 														width="25%"
 														items="{
