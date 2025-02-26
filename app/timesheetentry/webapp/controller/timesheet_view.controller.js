@@ -27,7 +27,7 @@ sap.ui.define([
     var oDialogCreate, i, addDefaultEntries = [], messageLogs = [], addEntriesLength = 0, savecount = 0, deletecount = 0, DateValue1, DateValue2, oOrderModel;
     var oModel, oAddEntryModel, oEmployeeModel, oWbsModel, oTaskModel, oTimesheetModel, oTemplateModel, oWbsModelGlobal, oCompanyCodeModel, oTemplateModel, DateoModel, DateoModel1, oWbsModelData;
     var MessageType = coreLibrary.MessageType, DialogType = mobileLibrary.DialogType, ButtonType = mobileLibrary.ButtonType;
-    var oBusyDialogAdd, oBusyDialogoWbs, oBusyDialogDeleteAll, oBusyDialogPrevious, oWbsInput, oEmployeeExtId, oEmployeeInternalId, oEmployeePersonId, oUserEmail, addCompanyCode, addCompanyCodeName, addWorkAgreement, messagaoDialog;
+    var oBusyDialogAdd, oBusyDialogoWbs, oBusyDialogDeleteAll, oBusyDialogPrevious, oBusyDialogTemplate, oWbsInput, oEmployeeExtId, oEmployeeInternalId, oEmployeePersonId, oUserEmail, addCompanyCode, addCompanyCodeName, addWorkAgreement, messagaoDialog;
     var ValueState = coreLibrary.ValueState, EdmType = exportLibrary.EdmType;
     var messageLogModel = new sap.ui.model.json.JSONModel(), GetTemplatesModel = new sap.ui.model.json.JSONModel();
     var oFromDate, oToDate;
@@ -1537,7 +1537,7 @@ sap.ui.define([
             if (!this._pMessagePopover) {
                 this._pMessagePopover = Fragment.load({
                     id: oViewPage.getId(),
-                    name: "workforce.employeetimesheet.view.MessageManager"
+                    name: "timesheetentry.view.MessageManager"
                 }).then(function (oMessagePopover) {
                     oViewPage.addDependent(oMessagePopover);
                     return oMessagePopover;
@@ -1655,6 +1655,11 @@ sap.ui.define([
                     }
                 }
             } else if (sSelectedKey == '2') {
+                oBusyDialogTemplate = new sap.m.BusyDialog({
+                    title: "Loading Data",
+                    text: "Please wait....."
+                });
+                oBusyDialogTemplate.open();
                 var oExternalId = this.getView().byId("id_employee_extid").getText(),
                     oView = this.getView();
                 let oGetTemplates = await that._getTemplates(oTemplateModel, oExternalId);
@@ -1674,7 +1679,9 @@ sap.ui.define([
                     }
                     this._pValueHelpDialog.then(function (oDialog) {
                         // Create a filter for the binding
-                            oDialog.open();
+                        oBusyDialogTemplate.close();
+                        oDialog.open();
+
                     });
                 } else {
                     GetTemplatesModel.setData(oGetTemplates);
@@ -1691,9 +1698,29 @@ sap.ui.define([
                         });
                     }
                     this._pValueHelpDialog.then(function (oDialog) {
-                            oDialog.open();
+                        oBusyDialogTemplate.close();
+                        oDialog.open();
                     });
                 }
+            }else{
+                var that = this;
+                oAddEntryModel = new sap.ui.model.json.JSONModel();
+                addDefaultEntries = [];
+                for (i = 0; i <= 4; i++) {
+                    var addDefaultEntry = {};
+                    addDefaultEntry.Id = i;
+                    addDefaultEntry.TimesheetDate = '';
+                    addDefaultEntry.TaskType = '';
+                    addDefaultEntry.WBSElemt = '';
+                    addDefaultEntry.RecordedHours = '0';
+                    addDefaultEntry.RecordedQuantity = '0';
+                    addDefaultEntries.push(addDefaultEntry);
+                }
+                oAddEntryModel.setData(addDefaultEntries);
+                that.getView().setModel(oAddEntryModel, "Entries");
+                oAddEntryModel.refresh(true);
+                this.getView().byId("id_add_entrysave").setEnabled(false);
+                this.getView().byId("id_add_entry_submit").setEnabled(false);
             }
         },
         _getpreviousdata: async function (oModelEntry, oFilter) {
@@ -1788,7 +1815,7 @@ sap.ui.define([
                 oDialogTemplate = new sap.ui.xmlfragment(this.getView().getId(), "timesheetentry.view.SaveTemplate", this);
                 this.getView().addDependent(oDialogTemplate);
                 oDialogTemplate.open();
-            }else{
+            } else {
                 oDialogTemplate.open();
             }
         },
@@ -1796,7 +1823,9 @@ sap.ui.define([
             return new Promise((resolve, reject) => {
                 oModel.create("/SaveTemplate", { entries }, {
                     success: function (data, response) {
-                        if (response.statusCode == '201') {
+                        if (response.statusCode == '200') {
+                            resolve(response);
+                        } else {
                             resolve(response);
                         }
                     }.bind(this),
@@ -1827,21 +1856,26 @@ sap.ui.define([
                 });
             });
         },
-        ongettemplateSearch: function(oEvent){
+        ongettemplateSearch: function (oEvent) {
             var sValue = oEvent.getParameter("value");
-			var oFilter = new Filter("TemplateDescription", FilterOperator.Contains, sValue);
-			var oBinding = oEvent.getParameter("itemsBinding");
-			oBinding.filter([oFilter]);
+            var oFilter = new Filter("TemplateDescription", FilterOperator.Contains, sValue);
+            var oBinding = oEvent.getParameter("itemsBinding");
+            oBinding.filter([oFilter]);
         },
-        ongettemplateClose: async function(oEvent){
+        ongettemplateClose: async function (oEvent) {
             var oTemplateModel = this.getOwnerComponent().getModel("SavetemplateService"),
                 that = this,
                 oCurrentdate = new Date(),
                 oSelectedItem = oEvent.getParameter("selectedItem");
+            var oBusyDialogTempl = new sap.m.BusyDialog({
+                title: "Loading Data",
+                text: "Please wait....."
+            });
+            oBusyDialogTempl.open();
             if (oSelectedItem) {
                 var oValue = oSelectedItem.getDescription();
-                var oTemplateData = await that._getTemplate(oTemplateModel,oValue);
-                if(oTemplateData.length > 0){
+                var oTemplateData = await that._getTemplate(oTemplateModel, oValue);
+                if (oTemplateData.length > 0) {
                     oAddEntryModel = new sap.ui.model.json.JSONModel();
                     that._getdates(oCurrentdate);
                     let dateJsonData = that._getDateRange(oFromDate, oToDate);
@@ -1872,7 +1906,12 @@ sap.ui.define([
                     this.getView().byId("id_add_entrysave").setEnabled(true);
                     this.getView().byId("id_add_entry_submit").setEnabled(true);
                     this.getView().byId("id_add_entrytemplate").setEnabled(false);
+                    oBusyDialogTempl.close();
+                } else {
+                    oBusyDialogTempl.close();
                 }
+            } else {
+                oBusyDialogTempl.close();
             }
         },
         _getTemplate: function (oModel, oTemplateId) {
@@ -1895,13 +1934,13 @@ sap.ui.define([
                 });
             });
         },
-        ontemplatesaveDialog: async function(){
+        ontemplatesaveDialog: async function () {
             var that;
             that = this;
             var oViewPage = that.getView();
             oTemplateModel = this.getOwnerComponent().getModel("SavetemplateService");
             oBusyDialogAdd = new sap.m.BusyDialog({
-                title: "Saving",
+                title: "Saving Template",
                 text: "Please wait....."
             });
             oBusyDialogAdd.open();
@@ -1943,6 +1982,9 @@ sap.ui.define([
                     }
                 }
                 let result = await that._saveTemplate(oTemplateModel, oTemplateEntries);
+                if (result) {
+                    that._logmessageTemplate(result);
+                }
             } else {
                 var oMessage = new Message({
                     message: "Fill all the details- Employee External Id,Person Worker Agreement ID,Company Code,Task Type/WBS Element, Recorded Hours",
@@ -1956,8 +1998,52 @@ sap.ui.define([
                 oBusyDialogAdd.close();
             }
         },
-        onCloseDialogtemplate: function(){
+        onCloseDialogtemplate: function () {
             this.getView().byId("id_dialogtemplateentries").close();
-        }
+            this.getView().byId("id_templateid_save").setValue("");
+            this.getView().byId("id_templatedesc_save").setValue("");
+        },
+        _logmessageTemplate: function (response) {
+            var that = this;
+            var message, state;
+            var oTemplateId = this.getView().byId("id_templateid_save");
+            var oTemplateVal = oTemplateId.getValue();
+            if (response.statusCode == '200') {
+                message = "Template-" + " " + oTemplateVal + " " + "Saved Successfully";
+                state = ValueState.Information;
+            } else {
+                message = "Template-" + " " + oTemplateVal + " " + "failed to save";
+                state = ValueState.Error;
+            }
+            this.oLogMessageTemplateDialog = new Dialog({
+                type: DialogType.Message,
+                title: "Information",
+                state: state,
+                content: new Text({ text: message }),
+                beginButton: new Button({
+                    type: ButtonType.Emphasized,
+                    text: "Ok",
+                    press: function () {
+                        this.oLogMessageTemplateDialog.close();
+                        addDefaultEntries = [];
+                        addEntriesLength = 0;
+                        oAddEntryModel.setData(addDefaultEntries);
+                        that.getView().setModel(oAddEntryModel, "Entries");
+                        oAddEntryModel.refresh(true);
+                        sap.ui.getCore().getMessageManager().removeAllMessages();
+                        this.getView().byId("id_dialogaddentries").close();
+                        this.getView().byId("id_add_entrysave").setEnabled(false);
+                        this.getView().byId("id_add_entry_submit").setEnabled(false);
+                        this.getView().byId("id_add_entrytemplate").setEnabled(false);
+                        this.getView().byId("id_templatecombo").setSelectedKey("");
+                        this.getView().byId("id_dialogtemplateentries").close();
+                        this.getView().byId("id_templateid_save").setValue("");
+                        this.getView().byId("id_templatedesc_save").setValue("");
+                        oBusyDialogAdd.close();
+                    }.bind(this)
+                })
+            });
+            this.oLogMessageTemplateDialog.open();
+        },
     });
 });
