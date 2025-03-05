@@ -1,0 +1,14 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<SelectDialog
+		id="selecttemplateDialog"
+		title="{i18n>templates}"
+		items="{AllTemplates>/}"
+		search=".ongettemplateSearch"
+		confirm=".ongettemplateClose"
+		cancel=".ongettemplateClose"
+		>
+		<StandardListItem id="id_standard"
+			title="{AllTemplates>TemplateDescription}"
+			description="{AllTemplates>TemplateId}" />
+	</SelectDialog>
+</core:FragmentDefinition>

@@ -7,6 +7,10 @@
         {
             "Card": "2",
             "Description":"Timecard from Templates"
+        },
+        {
+            "Card": "",
+            "Description":""
         }
     ]
 }

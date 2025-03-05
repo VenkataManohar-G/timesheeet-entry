@@ -1,0 +1,23 @@
+<core:FragmentDefinition xmlns:odata="sap.ui.comp.odata" xmlns="sap.m"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core">
+    <Dialog id="id_dialogtemplateentries" title="{i18n>addentry}">
+        <content>
+            <VBox id="id_template_vbox" class="sapUiSmallMargin">
+                        <Label id="id_templateid_label" text="Template Id" design="Bold" width="100%" required="true" textAlign="Begin" textDirection="LTR" />
+                        <Input id="id_templateid_save" />
+						<Label id="id_templatedesc_label" text="Template Description" design="Bold" width="100%" required="true" textAlign="Begin" textDirection="LTR" />
+                        <Input id="id_templatedesc_save"/>
+            </VBox>
+        </content>
+        <footer>
+            <Toolbar id="id_templatetoolbar">
+                <content>
+                    <Button id="id_template_submit" icon="sap-icon://save" type="Emphasized" text="{i18n>dialogtemplatesaveButtonText}" press="ontemplatesaveDialog" />
+                    <Button id="id_template_close" icon="sap-icon://sys-cancel" type="Reject" text="{i18n>dialogCancelButtonText}" press="onCloseDialogtemplate"/>
+                </content>
+            </Toolbar>
+        </footer>			
+    </Dialog>
+</core:FragmentDefinition>

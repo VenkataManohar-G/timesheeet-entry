@@ -27,7 +27,7 @@ sap.ui.define([
     var oDialogCreate, i, addDefaultEntries = [], messageLogs = [], addEntriesLength = 0, savecount = 0, deletecount = 0, DateValue1, DateValue2, oOrderModel;
     var oModel, oAddEntryModel, oEmployeeModel, oWbsModel, oTaskModel, oTimesheetModel, oTemplateModel, oWbsModelGlobal, oCompanyCodeModel, oTemplateModel, DateoModel, DateoModel1, oWbsModelData;
     var MessageType = coreLibrary.MessageType, DialogType = mobileLibrary.DialogType, ButtonType = mobileLibrary.ButtonType;
-    var oBusyDialogAdd, oBusyDialogoWbs, oBusyDialogDeleteAll, oBusyDialogPrevious, oBusyDialogTemplate, oWbsInput, oEmployeeExtId, oEmployeeInternalId, oEmployeePersonId, oUserEmail, addCompanyCode, addCompanyCodeName, addWorkAgreement, messagaoDialog;
+    var oBusyDialogAdd, oBusyDialogoWbs, oBusyDialogDeleteAll, oBusyDialogPrevious, oBusyDialogTemplate,oBusyDialogTemplateDelete, oWbsInput, oEmployeeExtId, oEmployeeInternalId, oEmployeePersonId, oUserEmail, addCompanyCode, addCompanyCodeName, addWorkAgreement, messagaoDialog;
     var ValueState = coreLibrary.ValueState, EdmType = exportLibrary.EdmType;
     var messageLogModel = new sap.ui.model.json.JSONModel(), GetTemplatesModel = new sap.ui.model.json.JSONModel();
     var oFromDate, oToDate;
@@ -1866,14 +1866,15 @@ sap.ui.define([
             var oTemplateModel = this.getOwnerComponent().getModel("SavetemplateService"),
                 that = this,
                 oCurrentdate = new Date(),
-                oSelectedItem = oEvent.getParameter("selectedItem");
+                oSelectedItem =  oEvent.getSource(),
+                oItem = oSelectedItem.getCells()[0].getTitle();
             var oBusyDialogTempl = new sap.m.BusyDialog({
                 title: "Loading Data",
                 text: "Please wait....."
             });
             oBusyDialogTempl.open();
             if (oSelectedItem) {
-                var oValue = oSelectedItem.getDescription();
+                var oValue =  oSelectedItem.getCells()[0].getTitle();
                 var oTemplateData = await that._getTemplate(oTemplateModel, oValue);
                 if (oTemplateData.length > 0) {
                     oAddEntryModel = new sap.ui.model.json.JSONModel();
@@ -1907,11 +1908,14 @@ sap.ui.define([
                     this.getView().byId("id_add_entry_submit").setEnabled(true);
                     this.getView().byId("id_add_entrytemplate").setEnabled(false);
                     oBusyDialogTempl.close();
+                    this.getView().byId("id_dialogtemplateentrieslist").close();
                 } else {
                     oBusyDialogTempl.close();
+                    this.getView().byId("id_dialogtemplateentrieslist").close();
                 }
             } else {
                 oBusyDialogTempl.close();
+                this.getView().byId("id_dialogtemplateentrieslist").close();
             }
         },
         _getTemplate: function (oModel, oTemplateId) {
@@ -2045,5 +2049,84 @@ sap.ui.define([
             });
             this.oLogMessageTemplateDialog.open();
         },
+        deletetemplate: async function(oEvent){
+            oBusyDialogTemplateDelete = new sap.m.BusyDialog({
+                title: "Delete Template",
+                text: "Please wait....."
+            });
+            oBusyDialogTemplateDelete.open();
+            var oemployeeExtId = this.getView().byId("id_add_employee_extid"),
+                getRemoveIndex = oEvent.getParameter("listItem"),
+                oCells = getRemoveIndex.getCells(),
+                sId = oCells[0].getTitle(),
+                oTemplateDeleteModel = this.getOwnerComponent().getModel("SavetemplateService"),
+                that = this;
+            var oDeletetemplateModel = [], deletetemplate = {};
+            if(sId){
+                deletetemplate.TemplateId = sId;
+                deletetemplate.EmployeeExternalId = oemployeeExtId.getText();
+                oDeletetemplateModel.push(deletetemplate);
+                let response = await that._deleteTemplate(oTemplateDeleteModel,oDeletetemplateModel);
+                if(response){
+                    let oGetTemplates = await that._getTemplates(oTemplateDeleteModel, oemployeeExtId.getText());
+                    if (oGetTemplates) {
+                        GetTemplatesModel.setData(oGetTemplates);
+                        GetTemplatesModel.refresh();
+                        that.getView().setModel(GetTemplatesModel, "AllTemplates");
+                    }
+                    that._logmessageDeleteTemplate(response);
+                }
+            }else{
+                oBusyDialogTemplateDelete.close();
+            }
+        },
+        _deleteTemplate: async function (oModel, entries) {
+            return new Promise((resolve, reject) => {
+                oModel.create("/DeleteTemplate", { entries }, {
+                    success: function (data, response) {
+                        if (response.statusCode == '200') {
+                            resolve({Id:entries[0].TemplateId,message:'Template Success deleted',status:'200'});
+                        } else {
+                            resolve({Id:entries[0].TemplateId,message:'Template Success deleted',status:'200'});
+                        }
+                    }.bind(this),
+                    error: function (error) {
+                        var errorLog = JSON.parse(error.responseText);
+                        reject({Id:entries[0].TemplateId,message:errorLog,status:'500'});
+                    }.bind(this)
+                });
+            });
+        },
+        _logmessageDeleteTemplate: async function (response) {
+            var that = this;
+            var message, state;
+            var oTemplateVal = response.Id;
+            if (response.status == '200') {
+                message = "Template-" + " " + oTemplateVal + " " + "Deleted Successfully";
+                state = ValueState.Information;
+            } else {
+                message = "Template-" + " " + oTemplateVal + " " + "failed to delete";
+                state = ValueState.Error;
+            }
+            this.oLogMessageTemplatedeleteDialog = new Dialog({
+                type: DialogType.Message,
+                title: "Information",
+                state: state,
+                content: new Text({ text: message }),
+                beginButton: new Button({
+                    type: ButtonType.Emphasized,
+                    text: "Ok",
+                    press: function async () {
+                        this.oLogMessageTemplatedeleteDialog.close();
+                        oBusyDialogTemplateDelete.close();
+                    }.bind(this)
+                })
+            });
+            this.oLogMessageTemplatedeleteDialog.open();
+        },
+        ontemplateclose: function(){
+            this.getView().byId("id_dialogtemplateentrieslist").close();
+            this.getView().byId("id_templatecombo").setSelectedKey('');
+        }
     });
 });

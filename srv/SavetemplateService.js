@@ -48,4 +48,38 @@ module.exports = cds.service.impl(async function (srv) {
         );
         return result;
     });
+
+    srv.on( 'DeleteTemplate', async (req) => {
+        const { entries } = req.data;
+        var TemplateId = entries[0].TemplateId;
+        var EmployeeExternalId = entries[0].EmployeeExternalId;
+        if (!TemplateId || !EmployeeExternalId) {
+            return req.error(400, "TemplateId and TemplateDescription are required.");
+        }
+ 
+        try {
+            const tx = cds.transaction(req);
+ 
+ 
+            const existingTemplate = await tx.run(
+                SELECT.one.from('db.master.TemplateTable')
+                    .where({ TemplateId, EmployeeExternalId })
+            );
+ 
+            if (!existingTemplate) {
+                return req.error(404, `Template with ID ${TemplateId} not found for employee ${EmployeeExternalId}.`);
+            }
+ 
+ 
+            await tx.run(
+                DELETE.from('db.master.TemplateTable')
+                    .where({ TemplateId, EmployeeExternalId })
+            );
+ 
+            return { message: "Template deleted successfully!" };
+        } catch (error) {
+            console.error("Error deleting template:", error);
+            return req.error(500, "Database deletion failed.");
+        }
+    });
 });
