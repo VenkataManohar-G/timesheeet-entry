@@ -31,6 +31,7 @@ sap.ui.define([
     var ValueState = coreLibrary.ValueState, EdmType = exportLibrary.EdmType;
     var messageLogModel = new sap.ui.model.json.JSONModel(), GetTemplatesModel = new sap.ui.model.json.JSONModel();
     var oFromDate, oToDate;
+    var TemplateId,TemplateDesc;
     return Controller.extend("timesheetentry.controller.timesheet_view", {
         formatWbsElement: function (value) {
             var Wbsstring, Wbsfinal;
@@ -443,6 +444,8 @@ sap.ui.define([
                 var dialogCopmapcycode = this.getView().byId("id_add_ccode");
                 dialogPersonworkext.setText(this.getView().byId("id_employee_extid").getText());
                 dialogpersonaggre.setText(this.getView().byId("id_wrkid_add").getText());
+                TemplateId = '';
+                TemplateDesc = '';
                 if (addCompanyCode) {
                     dialogCopmapcycode.setSelectedKey(addCompanyCode);
                 }
@@ -1603,6 +1606,8 @@ sap.ui.define([
                 filterUser = new sap.ui.model.Filter("PersonWorkAgreementExternalID", "EQ", oEmployeeId);
             oFilter.push(filterUser);
             if (sSelectedKey == '1') {
+                TemplateId = '';
+                TemplateDesc = '';
                 oBusyDialogPrevious = new sap.m.BusyDialog({
                     title: "loading Previous Timecard",
                     text: "Please wait....."
@@ -1651,7 +1656,7 @@ sap.ui.define([
                         oBusyDialogPrevious.close();
                         this.getView().byId("id_add_entrysave").setEnabled(true);
                         this.getView().byId("id_add_entry_submit").setEnabled(true);
-                        this.getView().byId("id_add_entrytemplate").setEnabled(false);
+                        this.getView().byId("id_add_entrytemplate").setEnabled(true);
                     }
                 }
             } else if (sSelectedKey == '2') {
@@ -1702,6 +1707,9 @@ sap.ui.define([
                         oDialog.open();
                     });
                 }
+                this.getView().byId("id_add_entrysave").setEnabled(true);
+                this.getView().byId("id_add_entry_submit").setEnabled(true);
+                this.getView().byId("id_add_entrytemplate").setEnabled(true);
             }else{
                 var that = this;
                 oAddEntryModel = new sap.ui.model.json.JSONModel();
@@ -1814,8 +1822,32 @@ sap.ui.define([
             if (!oDialogTemplate) {
                 oDialogTemplate = new sap.ui.xmlfragment(this.getView().getId(), "timesheetentry.view.SaveTemplate", this);
                 this.getView().addDependent(oDialogTemplate);
+                if(TemplateId){
+                    this.getView().byId('id_templateid_save').setValue(TemplateId);
+                    this.getView().byId('id_templateid_save').setEditable(false);
+                }else{
+                    this.getView().byId('id_templateid_save').setValue('');
+                    this.getView().byId('id_templateid_save').setEditable(true);
+                }
+                if(TemplateDesc){
+                    this.getView().byId('id_templatedesc_save').setValue(TemplateDesc);
+                }else{
+                    this.getView().byId('id_templatedesc_save').setValue('');
+                }
                 oDialogTemplate.open();
             } else {
+                if(TemplateId){
+                    this.getView().byId('id_templateid_save').setValue(TemplateId);
+                    this.getView().byId('id_templateid_save').setEditable(false);
+                }else{
+                    this.getView().byId('id_templateid_save').setValue('');
+                    this.getView().byId('id_templateid_save').setEditable(true);
+                }
+                if(TemplateDesc){
+                    this.getView().byId('id_templatedesc_save').setValue(TemplateDesc);
+                }else{
+                    this.getView().byId('id_templatedesc_save').setValue('');
+                }
                 oDialogTemplate.open();
             }
         },
@@ -1868,6 +1900,8 @@ sap.ui.define([
                 oCurrentdate = new Date(),
                 oSelectedItem =  oEvent.getSource(),
                 oItem = oSelectedItem.getCells()[0].getTitle();
+                TemplateId = oSelectedItem.getCells()[0].getTitle();
+                TemplateDesc = oSelectedItem.getCells()[1].getText();
             var oBusyDialogTempl = new sap.m.BusyDialog({
                 title: "Loading Data",
                 text: "Please wait....."
@@ -1906,7 +1940,7 @@ sap.ui.define([
                     oAddEntryModel.refresh(true);
                     this.getView().byId("id_add_entrysave").setEnabled(true);
                     this.getView().byId("id_add_entry_submit").setEnabled(true);
-                    this.getView().byId("id_add_entrytemplate").setEnabled(false);
+                    this.getView().byId("id_add_entrytemplate").setEnabled(true);
                     oBusyDialogTempl.close();
                     this.getView().byId("id_dialogtemplateentrieslist").close();
                 } else {
