@@ -22,5 +22,5 @@ service SavetemplateService @(path: 'SavetemplateService') {
     function GetTemplates(EmployeeExternalId : String(60))  returns array of MyTemplate;
     function GetTemplate(TemplateId : String(100))          returns array of Templates;
     action   DeleteTemplate(entries : array of TemplateEntry) returns String;
-
+    action   UpdateTemplate(entries: array of TemplateEntry) returns String;
 }

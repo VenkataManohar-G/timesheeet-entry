@@ -82,4 +82,31 @@ module.exports = cds.service.impl(async function (srv) {
             return req.error(500, "Database deletion failed.");
         }
     });
+
+    srv.on( 'UpdateTemplate', async (req) => {
+        const { entries } = req.data;
+        const tx = cds.transaction(req);
+        var TemplateId = entries[0].TemplateId;
+        var EmployeeExternalId = entries[0].EmployeeExternalId;
+        console.log(entries);
+        if (!TemplateId || !EmployeeExternalId) {
+            return req.error(400, "TemplateId and External Id are required.");
+        }
+       
+        try {
+            await tx.run(
+                DELETE.from('db.master.TemplateTable')
+                    .where({ TemplateId, EmployeeExternalId })
+            );
+            const result = await cds.transaction(req).run(
+                INSERT.into('db.master.TemplateTable').entries(entries)
+            );
+            console.log("Updated records:", result);
+            return { message: "Template updated successfully!" };
+        } catch (error) {
+            console.error("Error updating records:", error);
+            return req.error(500, "Database updation failed.");
+        }
+    });
+
 });
