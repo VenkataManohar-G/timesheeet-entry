@@ -185,7 +185,7 @@
 							        />
 									<Text id="id_cell1" text="{= ${Timesheet>Project_1} !== '' ? ${Timesheet>ProjectDescription_1} !== '' ? ${Timesheet>Project_1} + ' ' + '(' + ${Timesheet>ProjectDescription_1} + ')' : ${Timesheet>Project_1} : '' }"/>
 									<Text id="id_cell3" text="{= ${Timesheet>TimeSheetTaskType} !== '' ? ${Timesheet>TimeSheetTaskTypeText} !== '' ? ${Timesheet>TimeSheetTaskType} + ' ' + '(' + ${Timesheet>TimeSheetTaskTypeText} + ')' : ${Timesheet>TimeSheetTaskType} : ''	}"/>
-									<Text id="id_cell4" text="{= ${Timesheet>ReceiverCostCenter} !== '' ? ${Timesheet>ReceiverCostCenter} !== '' ? ${Timesheet>ReceiverCostCenter} + ' ' + '(' + ${Timesheet>ReceiverCostCenterDescription} + ')' : ${Timesheet>ReceiverCostCenter} : '' }"/>
+									<Text id="id_cell4" text="{= ${Timesheet>ReceiverCostCenter} !== '' ? ${Timesheet>ReceiverCostCenterDescription} !== '' ? ${Timesheet>ReceiverCostCenter} + ' ' + '(' + ${Timesheet>ReceiverCostCenterDescription} + ')' : ${Timesheet>ReceiverCostCenter} : '' }"/>
                                     <Text id="id_cell5" text="{= ${Timesheet>SenderCostCenter} !== '' ? ${Timesheet>SenderCostCenterDescription} !== '' ? ${Timesheet>SenderCostCenter} + ' ' + '(' + ${Timesheet>SenderCostCenterDescription} + ')' : ${Timesheet>SenderCostCenter} : '' }"/>
                                     <Text id="id_cell6" text="{Timesheet>RecordedHours}"/>
 									<ObjectStatus id="id_cell7" text="{= ${Timesheet>TimeSheetStatus} !== '' ? ${Timesheet>TimeSheetStatusText} !== '' ? ${Timesheet>TimeSheetStatusText} + ' ' + '(' + ${Timesheet>TimeSheetStatus} + ')' : ${Timesheet>TimeSheetStatus} : '' }" state="{path: 'Timesheet>TimeSheetStatus', formatter: '.formatStatus'}" />
