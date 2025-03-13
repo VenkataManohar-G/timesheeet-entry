@@ -24,14 +24,14 @@ sap.ui.define([
     SearchField, UIColumn, MColumn, Label, TypeString, compLibrary, FilterOperator, Fragment, Message, Container, Spreadsheet, MessageBox
 ) => {
     "use strict";
-    var oDialogCreate, i, addDefaultEntries = [], messageLogs = [], addEntriesLength = 0, savecount = 0, deletecount = 0, DateValue1, DateValue2, oOrderModel;
-    var oModel, oAddEntryModel, oEmployeeModel, oWbsModel, oTaskModel, oTimesheetModel, oTemplateModel, oWbsModelGlobal, oCompanyCodeModel, oTemplateModel, DateoModel, DateoModel1, oWbsModelData, i18nModel;
+    var oDialogCreate, i, addDefaultEntries = [], configEntries = [], messageLogs = [], addEntriesLength = 0, savecount = 0, deletecount = 0, DateValue1, DateValue2, oOrderModel;
+    var oModel, oAddEntryModel, oConfigModel,oFieldModel, oEmployeeModel, oWbsModel, oWbsModelAll, oTaskModel, oTimesheetModel, oTemplateModel, oWbsModelGlobal, oCompanyCodeModel, oTemplateModel, DateoModel, DateoModel1, oWbsModelData, oWbsModelDataAll, i18nModel;
     var MessageType = coreLibrary.MessageType, DialogType = mobileLibrary.DialogType, ButtonType = mobileLibrary.ButtonType;
     var oBusyDialogAdd, oBusyDialogoWbs, oBusyDialogDeleteAll, oBusyDialogPrevious, oBusyDialogTemplate, oBusyDialogTemplateDelete, oWbsInput, oEmployeeExtId, oEmployeeInternalId, oEmployeePersonId, oUserEmail, addCompanyCode, addCompanyCodeName, addWorkAgreement, messagaoDialog;
     var ValueState = coreLibrary.ValueState, EdmType = exportLibrary.EdmType;
     var messageLogModel = new sap.ui.model.json.JSONModel(), GetTemplatesModel = new sap.ui.model.json.JSONModel();
     var oFromDate, oToDate;
-    var TemplateId, TemplateDesc;
+    var TemplateId, TemplateDesc, isAllWbsElement = 'X';
     return Controller.extend("timesheetentry.controller.timesheet_view", {
         formatWbsElement: function (value) {
             var Wbsstring, Wbsfinal;
@@ -203,8 +203,36 @@ sap.ui.define([
             that.getView().setModel(DateoModel, "DateModel");
             oOrderModel = this.getOwnerComponent().getModel("configurationModel");
             this.dateTimePeriod();
-
+            this._configSettings();
             i18nModel = this.getView().getModel("i18n");
+
+            oFieldModel = new sap.ui.model.json.JSONModel({          
+                bHideColumn: true
+            });
+            that.getView().setModel(oFieldModel,"FieldProperty");
+
+        },
+        _configSettings: function () {
+            var that = this;
+            oConfigModel = new sap.ui.model.json.JSONModel();
+            var configEntry = {};
+            configEntry.Checked = true;
+            configEntry.Id = '1';
+            configEntry.Field = 'Task Type';
+            configEntries.push(configEntry);
+            var configEntry = {};
+            configEntry.Checked = false;
+            configEntry.Id = '2';
+            configEntry.Field = 'Employee Wbs Element';
+            configEntries.push(configEntry);
+            var configEntry = {};
+            configEntry.Checked = true;
+            configEntry.Id = '3';
+            configEntry.Field = 'Wbs Element';
+            configEntries.push(configEntry);
+            oConfigModel.setData(configEntries);
+            that.getView().setModel(oConfigModel, "Settings");
+            oConfigModel.refresh(true);
         },
         /*week Days Calculation*/
         dateTimePeriod: function () {
@@ -825,7 +853,7 @@ sap.ui.define([
                 oTemplteBtn.setEnabled(true);
             }
         },
-        getWbsElement: function (oExternalId, currentDateVal, employeefilterVal) {
+        getWbsElement: function (oExternalId, currentDateVal) {
             var oFilter = [];
             var that = this;
             var filterUser, filterYear, filterMonth;
@@ -837,10 +865,8 @@ sap.ui.define([
             var monthfinalValue = filterMonthstring.padStart(3, '0');
             oWbsModel = this.getOwnerComponent().getModel("WbsElementService");
             oWbsModelData = new sap.ui.model.json.JSONModel();
-            if (employeefilterVal === true) {
-                filterUser = new sap.ui.model.Filter("PersonExternalID", "EQ", oExternalId);
-                oFilter.push(filterUser);
-            }
+            filterUser = new sap.ui.model.Filter("PersonExternalID", "EQ", oExternalId);
+            oFilter.push(filterUser);
             filterYear = new sap.ui.model.Filter("FiscalYear", "EQ", oFiscalyear);
             oFilter.push(filterYear);
             filterMonth = new sap.ui.model.Filter("FiscalPeriod", "EQ", monthfinalValue);
@@ -871,19 +897,51 @@ sap.ui.define([
                 }.bind(this)
             });
         },
+        getWbsElementAll: function () {
+            var that = this;
+            oWbsModelAll = this.getOwnerComponent().getModel("WbsElementServiceAll");
+            oWbsModelDataAll = new sap.ui.model.json.JSONModel();
+            oBusyDialogoWbs = new sap.m.BusyDialog({
+                title: "Loading Data",
+                text: "Please wait....."
+            });
+            oBusyDialogoWbs.open();
+            oWbsModelAll.read("/MyWbsElementAll", {
+                urlParameters: { "$top": 999999 },
+                success: function (response) {
+                    if (response.results.length !== 0) {
+                        oWbsModelDataAll.setData(response.results);
+                        that.getView().setModel(oWbsModelDataAll, "ResourceWbsAll");
+                        that._setwbsAllDialog();
+                    } else {
+                        MessageBox.warning("No Wbs Element Data Found.");
+                        oBusyDialogoWbs.close();
+                    }
+                }.bind(this),
+                error: function (error) {
+                    // console.log(error);
+                    oBusyDialogoWbs.close();
+                }.bind(this)
+            });
+        },
         /*WBS Value Help*/
         onAddWbsVH: function (oEvent) {
             oWbsInput = oEvent.getSource();
             var oEmployeeFilter
             var oCurrentDate = oEvent.getSource().getParent().getCells()[1].getValue();
             var oEmployeeExtIDvalue = this.getView().byId("id_employee_extid").getText();
-            if (oOrderModel.oData.configFile[0].WbsElementEmployee === true) {
+           if (oOrderModel.oData.configFile[0].WbsElementEmployee === true) {
                 oEmployeeFilter = true;
             } else {
                 oEmployeeFilter = false;
             }
             console.log(oOrderModel);
-            this.getWbsElement(oEmployeeExtIDvalue, oCurrentDate, oEmployeeFilter)
+            if(isAllWbsElement){
+                this.getWbsElementAll();
+            }else{
+                this.getWbsElement(oEmployeeExtIDvalue, oCurrentDate);
+            }
+            
 
         },
         _setwbsDialog: function () {
@@ -1061,6 +1119,147 @@ sap.ui.define([
             });
         },
         /*WBS Value Help*/
+        /*WBS Value Help All*/
+        _setwbsAllDialog: function () {
+            this._oBasicSearchFieldWithSuggestionsWbsAll = new SearchField();
+            this.pDialogWithSuggestionsWbsAll = this.loadFragment({
+                name: "timesheetentry.view.WbsAllVH"
+            }).then(function (oDialogSuggestionsWbsAll) {
+                var oFilterBar = oDialogSuggestionsWbsAll.getFilterBar(), oColumnEngProject, oColumnEngProjectName, oColumnWrkPackage,
+                    oColumnWorkPackageName, oColumnWBSElementInternalID, oColumnEngagementProjectResourceType, oColumnEngagementProjResourceTypeText, oColumnEngagementProjResource,
+                    oColumnEngagementProjResourceText, oColumnWorkPackageStartDate, oColumnWorkPackageEndDate;
+                this._oVHDWithSuggestionsWbsAll = oDialogSuggestionsWbsAll;
+                this.getView().addDependent(oDialogSuggestionsWbsAll);
+                // Set key fields for filtering in the Define Conditions Tab
+                oDialogSuggestionsWbsAll.setRangeKeyFields([{
+                    label: "Project External Id",
+                    key: "ProjectExternalID",
+                    type: "string",
+                    typeInstance: new TypeString({}, {
+                        maxLength: 20
+                    })
+                }]);
+                // Set Basic Search for FilterBar
+                oFilterBar.setFilterBarExpanded(false);
+                oFilterBar.setBasicSearch(this._oBasicSearchFieldWithSuggestionsWbsAll);
+
+                // Trigger filter bar search when the basic search is fired
+                this._oBasicSearchFieldWithSuggestionsWbsAll.attachSearch(function () {
+                    oFilterBar.search();
+                });
+                oDialogSuggestionsWbsAll.getTableAsync().then(function (oTable) {
+                    // For Desktop and tabled the default table is sap.ui.table.Table
+                    if (oTable.bindRows) {
+                        // Bind rows to the ODataModel and add columns
+                        oTable.bindAggregation("rows", {
+                            path: "ResourceWbsAll>/",
+                            events: {
+                                dataReceived: function () {
+                                    oDialogSuggestionsWbsAll.update();
+                                }
+                            }
+                        });
+                        oColumnEngProject = new UIColumn({ label: new Label({ text: "Project External" }), template: new Text({ wrapping: false, text: "{ResourceWbsAll>ProjectExternalID}" }) });
+                        oColumnEngProject.data({
+                            fieldName: "ProjectExternalID"
+                        });
+                        oTable.addColumn(oColumnEngProject);
+
+                        oColumnEngProjectName = new UIColumn({ label: new Label({ text: "Project Description" }), template: new Text({ wrapping: false, text: "{ResourceWbsAll>ProjectDescription}" }) });
+                        oColumnEngProjectName.data({
+                            fieldName: "ProjectDescription"
+                        });
+                        oTable.addColumn(oColumnEngProjectName);
+
+
+                        oColumnWBSElementInternalID = new UIColumn({ label: new Label({ text: "Work Package InternalId" }), template: new Text({ wrapping: false, text: "{ResourceWbsAll>WBSElementInternalID}" }) });
+                        oColumnWBSElementInternalID.data({
+                            fieldName: "WBSElementInternalID"
+                        });
+                        oTable.addColumn(oColumnWBSElementInternalID);
+
+                        oColumnWorkPackageStartDate = new UIColumn({ label: new Label({ text: "Startdate" }), template: new Text({ wrapping: false, text: "{ResourceWbsAll>PlannedStartDate}" }) });
+                        oColumnWorkPackageStartDate.data({
+                            fieldName: "PlannedStartDate"
+                        });
+                        oTable.addColumn(oColumnWorkPackageStartDate);
+
+                        oColumnWorkPackageEndDate = new UIColumn({ label: new Label({ text: "Enddate" }), template: new Text({ wrapping: false, text: "{ResourceWbsAll>PlannedEndDate}" }) });
+                        oColumnWorkPackageEndDate.data({
+                            fieldName: "PlannedEndDate"
+                        });
+                        oTable.addColumn(oColumnWorkPackageEndDate);
+                    }
+                }.bind(this));
+                oDialogSuggestionsWbsAll.open();
+                oBusyDialogoWbs.close();
+            }.bind(this));
+        },
+        onValueHelpWbsAllVHOkPress: function (oEvent) {
+            var oSaveBtn = this.getView().byId("id_add_entrysave");
+            var oSubmitBtn = this.getView().byId("id_add_entry_submit");
+            var oTemplteBtn = this.getView().byId("id_add_entrytemplate");
+            var aTokens = oEvent.getParameter("tokens");
+            if (aTokens.length > 0) {
+                var oText = aTokens[0].getKey();
+                var oselectedSet = aTokens[0].getAggregation("customData");
+                var oselectedData = oselectedSet[0].getProperty("value");
+                oWbsInput.setValue(oselectedData.WBSElementInternalID);
+                oWbsInput.setValueState(ValueState.None);
+                oWbsInput.setValueStateText("");
+                oSaveBtn.setEnabled(true);
+                oSubmitBtn.setEnabled(true);
+                oTemplteBtn.setEnabled(true);
+                //console.log(oselectedData.WorkPackage);
+            }
+            this._oVHDWithSuggestionsWbsAll.close();
+        },
+        onValueHelpWbsAllVHCancelPress: function (oEvent) {
+            this._oVHDWithSuggestionsWbsAll.close();
+        },
+        onValueHelpWbsAllVHAfterClose: function (oEvent) {
+            this._oVHDWithSuggestionsWbsAll.destroy();
+        },
+        onFilterBarWithSuggestionsWbsAllVHSearch: function (oEvent) {
+            var sSearchQuery = this._oBasicSearchFieldWithSuggestionsWbs.getValue(),
+                aSelectionSet = oEvent.getParameter("selectionSet"),
+                aFilters = aSelectionSet.reduce(function (aResult, oControl) {
+                    if (oControl.getValue()) {
+                        aResult.push(new Filter({
+                            path: oControl.getName(),
+                            operator: FilterOperator.Contains,
+                            value1: oControl.getValue()
+                        }));
+                    }
+
+                    return aResult;
+                }, []);
+
+            aFilters.push(new Filter({
+                filters: [
+                    new Filter({ path: "ProjectExternalID", operator: FilterOperator.Contains, value1: sSearchQuery }),
+                ],
+                and: false
+            }));
+
+            this._filterTableWithSuggestionsWbsAll(new Filter({
+                filters: aFilters,
+                and: true
+            }));
+        },
+        _filterTableWithSuggestionsWbsAll: function (oFilter) {
+            var oVHD = this._oVHDWithSuggestionsWbsAll;
+            oVHD.getTableAsync().then(function (oTable) {
+                if (oTable.bindRows) {
+                    oTable.getBinding("rows").filter(oFilter);
+                }
+                if (oTable.bindItems) {
+                    oTable.getBinding("items").filter(oFilter);
+                }
+                oVHD.update();
+            });
+        },
+        /*WBS Value Help All*/
         /*Submit Entries*/
         _entriesValidations: function (oList) {
             var oEmpExtValueadd = this.byId("id_add_employee_extid");
@@ -1178,7 +1377,12 @@ sap.ui.define([
                         }
 
                         oRecordEntries[i] = TimesheetData;
-                        let result = await that._postEntries(oTimesheetModel, oRecordEntries[i], i, addEntriesLength);
+                        try {
+                            let result = await that._postEntries(oTimesheetModel, oRecordEntries[i], i, addEntriesLength);    
+                        } catch (error) {
+                         continue;    
+                        }
+                        
                     }
                 }
                 messageLogModel.setData(messageLogs);
@@ -1494,7 +1698,12 @@ sap.ui.define([
                         }
 
                         oRecordEntries[i] = TimesheetData;
-                        let result = await that._postEntries(oTimesheetModel, oRecordEntries[i], i, addEntriesLength);
+                        try {
+                            let result = await that._postEntries(oTimesheetModel, oRecordEntries[i], i, addEntriesLength);
+                        } catch (error) {
+                            continue;
+                        }
+                        
                     }
                 }
                 messageLogModel.setData(messageLogs);
@@ -1640,7 +1849,12 @@ sap.ui.define([
                     TimesheetData.TimeSheetDataFields_WBSElement = oContext[16].getText();
                     TimesheetData.TimeSheetDataFields_HoursUnitOfMeasure = 'H';
                     oRecordEntries[i] = TimesheetData;
-                    let result = await that._deleteallrecords(oModelDeleteAll, oRecordEntries[i]);
+                    try {
+                        let result = await that._deleteallrecords(oModelDeleteAll, oRecordEntries[i]);
+                    } catch (error) {
+                        continue;
+                    }
+                    
                 }
                 that._logmessageError();
             }
@@ -2311,6 +2525,45 @@ sap.ui.define([
         ontemplateclose: function () {
             this.getView().byId("id_dialogtemplateentrieslist").close();
             this.getView().byId("id_templatecombo").setSelectedKey('');
+        },
+        onfieldSetting: function () {
+            var oDialogSetting = this.byId("id_dialogsettings");
+            if (!oDialogSetting) {
+                oDialogSetting = new sap.ui.xmlfragment(this.getView().getId(), "timesheetentry.view.Settings", this);
+                this.getView().addDependent(oDialogSetting);
+                oDialogSetting.open();
+            } else {
+                oDialogSetting.open();
+            }
+        },
+        onsettingok: function(){
+            var SettingTable = this.getView().byId("tablesetting");
+            var fieldData = SettingTable.getBinding("items"),
+            ofieldList = fieldData.oList;
+            if(ofieldList[1].Checked == true && ofieldList[2].Checked == true){
+                MessageBox.error("Both Employee Wbs Element and Wbs Element cannot be checked!!");
+            }else{
+                if(ofieldList[0].Checked == true){
+                    oFieldModel = this.getView().getModel("FieldProperty");
+                    oFieldModel.setProperty("/bHideColumn", true);
+                }else{
+                    oFieldModel = this.getView().getModel("FieldProperty");
+                    oFieldModel.setProperty("/bHideColumn", false);
+                    oFieldModel.refresh();
+                }
+                if(ofieldList[1].Checked == true){
+                    isAllWbsElement = '';
+                }else if(ofieldList[2].Checked == true){
+                    isAllWbsElement = 'X';
+                }else{
+                    isAllWbsElement = 'X';
+                }
+                this.getView().byId("id_dialogsettings").close();
+            }
+           
+        },
+        onsettingClose: function(){
+            this.getView().byId("id_dialogsettings").close();
         }
     });
 });

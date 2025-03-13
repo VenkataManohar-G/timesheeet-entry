@@ -56,6 +56,14 @@
           "odataVersion": "2.0"
         }
       },
+      "WbsElementServiceAll":{
+        "uri": "odata/v2/WbsElementServiceAll",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "2.0"
+        }
+      },
       "TimesheetDeleteService": {
         "uri": "odata/v2/TimesheetDeleteService",
         "type": "OData",
@@ -186,6 +194,15 @@
       },
       "WbsElementService": {
         "dataSource": "WbsElementService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "WbsElementServiceAll": {
+        "dataSource": "WbsElementServiceAll",
         "preload": true,
         "settings": {
           "operationMode": "Server",

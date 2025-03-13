@@ -1,0 +1,46 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+    <Dialog id="id_dialogsettings" title="{i18n>settings}" contentWidth="30%">
+        <content>
+            <VBox class="sapUiSmallMargin" id="tableContainersetting">
+                <Table id="tablesetting" width="auto" inset="false" enableBusyIndicator="true"
+				sticky="ColumnHeaders,HeaderToolbar"
+				growing="true"
+				alternateRowColors="true"
+				showNoData="true"
+				items="{
+						path: 'Settings>/'
+					}">
+							<columns>
+								<Column id="id_columnsetting" width="20%" >
+									<Text id="id_checboxsetting" />
+								</Column>
+                                <Column id="id_columnsettingid" visible="false" >
+									<Text id="id_settingid" />
+								</Column>
+								<Column id="id_column2setting">
+									<Text id="id_fieldsetting" text="{i18n>field}"/>
+								</Column>
+							</columns>
+							<items>
+							<ColumnListItem id="id_uploadcolumnlistsetting" vAlign="Middle" >
+								<cells>
+									<CheckBox id="id_check"  selected="{Settings>Checked}" />
+                                    <Text id="id_text" text="{Settings>Id}"/>
+									<Text id="id_field_text" text="{Settings>Field}" />
+								</cells>
+							</ColumnListItem>
+							</items>
+				</Table>
+            </VBox>
+        </content>
+        <footer>
+            <Toolbar id="id_createtoolbarsetting">
+                <content>
+                    <ToolbarSpacer id="id_toolbarsettings"/>
+                    <Button id="id_setting_ok" type="Emphasized" text="{i18n>settingok}" press="onsettingok" />
+                    <Button id="id_setting_close" type="Reject" text="{i18n>settingclose}" press="onsettingClose"/>
+                </content>
+            </Toolbar>
+        </footer>
+    </Dialog>
+</core:FragmentDefinition>

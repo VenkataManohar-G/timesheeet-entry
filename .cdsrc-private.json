@@ -46,6 +46,12 @@
           "path": "/sap/opu/odata/sap/ZAPI_EMPLOYEE_DETAILS_SB"
         }
       },
+      "YY1_WBSELEMENTSBASIC_CDS":{
+        "credentials": {
+          "destination": "MANAGEWORKFORCE",
+          "path": "/sap/opu/odata/sap/YY1_WBSELEMENTSBASIC_CDS"
+        }
+      },
       "db": {
         "binding": {
           "type": "cf",

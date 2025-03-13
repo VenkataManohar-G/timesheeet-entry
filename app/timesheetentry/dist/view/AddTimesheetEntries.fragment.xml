@@ -86,6 +86,7 @@
 											</layoutData>
 									</ComboBox>
 									<Button id="id_add_button" text="{i18n>addRow}" icon="sap-icon://add" type="Emphasized" press="onAddEntry"/>
+									<Button id="id_setting_button" icon="sap-icon://action-settings" type="Emphasized" press="onfieldSetting"/>
 								</Toolbar>
 							</headerToolbar>
 							<columns>
@@ -95,7 +96,7 @@
 								<Column id="id_column2">
 									<Text id="id_date" text="{i18n>date}"/>
 								</Column>
-								<Column id="id_column3">
+								<Column id="id_column3" visible="{FieldProperty>/bHideColumn}">
 									<Text id="id_tasktype" text="{i18n>taskType}"/>
 								</Column>
 								<Column id="id_column4">

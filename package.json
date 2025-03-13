@@ -164,6 +164,30 @@
           }
         }
       },
+      "YY1_WBSELEMENTSBASIC_CDS":{
+        "kind": "odata-v2",
+        "model": "srv/external/YY1_WBSELEMENTSBASIC_CDS",
+        "[hybrid]": {
+          "credentials": {
+            "destination": "MANAGEWORKFORCE",
+            "path": "/sap/opu/odata/sap/YY1_WBSELEMENTSBASIC_CDS"
+          },
+          "destinationOptions": {
+            "selectionStrategy": "alwaysSubscriber",
+            "useCache": true
+          }
+        },
+        "[production]": {
+          "credentials": {
+            "destination": "MANAGEWORKFORCE",
+            "path": "/sap/opu/odata/sap/YY1_WBSELEMENTSBASIC_CDS"
+          },
+          "destinationOptions": {
+            "selectionStrategy": "alwaysSubscriber",
+            "useCache": true
+          }
+        }
+      },
       "workzone": true,
       "db": {
         "kind": "hana"

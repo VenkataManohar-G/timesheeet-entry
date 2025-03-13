@@ -48,8 +48,9 @@ module.exports = cds.service.impl(async function (srv) {
 
             return req.data;
         } catch (error) {
-            console.error("Error processing the timesheet entry:", error);
-            throw error;
+            console.log(error.rootCause?.response?.data.error.message.value);
+            var message = error.rootCause?.response?.data.error.message;
+            return req.error(500,message.value);
         }
 
     });

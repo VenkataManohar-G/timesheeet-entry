@@ -14,7 +14,8 @@
         <footer>
             <Toolbar id="id_templatetoolbar">
                 <content>
-                    <Button id="id_template_submit" icon="sap-icon://save" type="Emphasized" text="{i18n>dialogtemplatesaveButtonText}" press="ontemplatesaveDialog" />
+                    <Button id="id_template_update" icon="sap-icon://save" type="Emphasized" text="{i18n>dialogtemplateupdateButtonText}" press="ontemplateupdateDialog" visible="false" />
+                    <Button id="id_template_submit" icon="sap-icon://save" type="Emphasized" text="{i18n>dialogtemplatesaveButtonText}" press="ontemplatesaveDialog" visible="false" />
                     <Button id="id_template_close" icon="sap-icon://sys-cancel" type="Reject" text="{i18n>dialogCancelButtonText}" press="onCloseDialogtemplate"/>
                 </content>
             </Toolbar>
