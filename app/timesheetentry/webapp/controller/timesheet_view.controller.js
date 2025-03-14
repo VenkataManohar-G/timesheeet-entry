@@ -476,6 +476,11 @@ sap.ui.define([
                 dialogpersonaggre.setText(this.getView().byId("id_wrkid_add").getText());
                 TemplateId = '';
                 TemplateDesc = '';
+                if(isAllWbsElement){
+                    this.getView().byId("id_wbs_elmt").setText("Wbs Element");
+                }else{
+                    this.getView().byId("id_wbs_elmt").setText("Employee Wbs Element");
+                }
                 if (addCompanyCode) {
                     dialogCopmapcycode.setSelectedKey(addCompanyCode);
                 }
@@ -490,6 +495,11 @@ sap.ui.define([
                 var dialogCopmapcycode = this.getView().byId("id_add_ccode");
                 dialogPersonworkext.setText(this.getView().byId("id_employee_extid").getText());
                 dialogpersonaggre.setText(this.getView().byId("id_wrkid_add").getText());
+                if(isAllWbsElement){
+                    this.getView().byId("id_wbs_elmt").setText("Wbs Element");
+                }else{
+                    this.getView().byId("id_wbs_elmt").setText("Employee Wbs Element");
+                }
                 if (addCompanyCode) {
                     dialogCopmapcycode.setSelectedKey(addCompanyCode);
                 }
@@ -2553,10 +2563,13 @@ sap.ui.define([
                 }
                 if(ofieldList[1].Checked == true){
                     isAllWbsElement = '';
+                    this.getView().byId("id_wbs_elmt").setText("Employee Wbs Element");
                 }else if(ofieldList[2].Checked == true){
                     isAllWbsElement = 'X';
+                    this.getView().byId("id_wbs_elmt").setText("Wbs Element");
                 }else{
                     isAllWbsElement = 'X';
+                    this.getView().byId("id_wbs_elmt").setText("Wbs Element");
                 }
                 this.getView().byId("id_dialogsettings").close();
             }

@@ -2,14 +2,13 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m" xmlns:f="sap.ui.layout.form"
     xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout">
-    <Page showFooter="true" id="page" title="{i18n>title}">
+    <Page showFooter="true" showHeader="false" id="page">
          <content>
             <VBox id="id_vbox" class="sapUiSmallMargin">
                 <f:SimpleForm id="id_simpleform" editable="true" layout="ResponsiveGridLayout" title="{i18n>detailsscreen}" labelSpanXL="4" 
                         labelSpanM="4" labelSpanL="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="4" emptySpanM="0"
                         emptySpanS="0" columnsXL="4" columnsL="1" columnsM="1" singleContainerFullSize="false" >
                     <f:content>
-                        <core:Title id="id_stitle" text="{i18n>screentitle}"></core:Title>
                         <Label id="id_employee_label" text="{i18n>employeeId}" design="Bold" width="100%" required="true" textAlign="Begin" textDirection="LTR" />
                         <Text id="id_employee_extid" />
 						<Label id="id_wrkid_label_add" text="{i18n>workerId}" design="Bold" width="100%" required="true" textAlign="Begin" textDirection="LTR" />
