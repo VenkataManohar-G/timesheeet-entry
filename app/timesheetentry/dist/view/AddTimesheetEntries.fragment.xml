@@ -5,7 +5,7 @@
     <Dialog id="id_dialogaddentries" title="{i18n>addentry}">
         <content>
             <VBox id="id_add_vbox" class="sapUiSmallMargin">
-                <f:SimpleForm id="id_add_entries_simpleform" editable="true" layout="ResponsiveGridLayout" title="Selection Screen" labelSpanXL="4" 
+                <f:SimpleForm id="id_add_entries_simpleform" editable="true" layout="ResponsiveGridLayout" labelSpanXL="4" 
                         labelSpanM="4" labelSpanL="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="4" emptySpanM="0"
                         emptySpanS="0" columnsXL="3" columnsL="1" columnsM="1" singleContainerFullSize="false" >
                     <f:content>
@@ -100,7 +100,7 @@
 									<Text id="id_tasktype" text="{i18n>taskType}"/>
 								</Column>
 								<Column id="id_column4">
-									<Text id="id_wbs_elmt" text="{i18n>wbsElement}"/>
+									<Text id="id_wbs_elmt" />
 								</Column>
 								<Column id="id_column5">
 									<Text id="id_recordedhrs" text="{i18n>recordedHours}"/>

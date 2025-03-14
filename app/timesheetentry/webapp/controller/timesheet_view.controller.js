@@ -557,6 +557,8 @@ sap.ui.define([
             this.getView().byId("id_add_entry_submit").setEnabled(false);
             this.getView().byId("id_add_entrytemplate").setEnabled(false);
             this.getView().byId("id_templatecombo").setSelectedKey("");
+            TemplateId = '';
+            TemplateDesc = '';
         },
         handleDateChangeadd_entries: function (oEvent) {
             var oSaveBtn = this.getView().byId("id_add_entrysave");
@@ -1469,6 +1471,8 @@ sap.ui.define([
             oAddEntryModel.setData(addDefaultEntries);
             that.getView().setModel(oAddEntryModel, "Entries");
             oAddEntryModel.refresh(true);
+            TemplateId = '';
+            TemplateDesc = '';
             this.byId("dialogmessageboxcreate").close();
             oBusyDialogAdd.close();
             this.getView().byId("id_dialogaddentries").close();
@@ -1532,6 +1536,8 @@ sap.ui.define([
                                 type: ButtonType.Emphasized,
                                 text: "Ok",
                                 press: function () {
+                                    TemplateId = '';
+                                    TemplateDesc = '';
                                     this.oLogMessageDeleteDialog.close();
                                     oBusyDialogDeleteEntry.close();
                                     this._bindtimesheet(oPersonWorkAgreementExternalID, DateValue1, DateValue2);
@@ -1552,6 +1558,8 @@ sap.ui.define([
                             type: ButtonType.Emphasized,
                             text: "Ok",
                             press: function () {
+                                TemplateId = '';
+                                TemplateDesc = '';
                                 this.oLogMessageDeleteDialogerror.close();
                                 oBusyDialogDeleteEntry.close();
                             }.bind(this)
@@ -1636,6 +1644,8 @@ sap.ui.define([
                     text: "Ok",
                     press: function () {
                         deletecount = 0;
+                        TemplateId = '';
+                        TemplateDesc = '';
                         this.oLogMessagedeleteAllDialog.close();
                         oBusyDialogDeleteAll.close();
                         that._bindtimesheet(oemployeeExtIdVal, DateValue1, DateValue2);
@@ -1992,6 +2002,8 @@ sap.ui.define([
             } else {
                 var that = this;
                 oAddEntryModel = new sap.ui.model.json.JSONModel();
+                TemplateId = '';
+                TemplateDesc = '';
                 addDefaultEntries = [];
                 for (i = 0; i <= 4; i++) {
                     var addDefaultEntry = {};
@@ -2414,6 +2426,8 @@ sap.ui.define([
             this.getView().byId("id_dialogtemplateentries").close();
             this.getView().byId("id_templateid_save").setValue("");
             this.getView().byId("id_templatedesc_save").setValue("");
+            TemplateId = '';
+            TemplateDesc = '';
         },
         _logmessageTemplate: function (response) {
             var that = this;
@@ -2451,6 +2465,8 @@ sap.ui.define([
                         this.getView().byId("id_dialogtemplateentries").close();
                         this.getView().byId("id_templateid_save").setValue("");
                         this.getView().byId("id_templatedesc_save").setValue("");
+                        TemplateId = '';
+                        TemplateDesc = '';
                         oBusyDialogAdd.close();
                     }.bind(this)
                 })
@@ -2577,6 +2593,33 @@ sap.ui.define([
         },
         onsettingClose: function(){
             this.getView().byId("id_dialogsettings").close();
+        },
+        onExit: function (){
+            var oAddEntryDialog = this.getView().byId("id_dialogaddentries");
+            var oTemplateList = this.getView().byId("id_dialogtemplateentrieslist");
+            var oDialogMessage = this.getView().byId("dialogmessageboxcreate");
+            var oMessagepopover = this.getView().byId("id_msgpopover");
+            var oTemplate = this.getView().byId("id_dialogtemplateentries");
+            var oSettings = this.getView().byId("id_dialogsettings");
+
+            if(oAddEntryDialog){
+                oAddEntryDialog.destroy();
+            }
+            if(oTemplateList){
+                oTemplateList.destroy();
+            }
+            if(oDialogMessage){
+                oDialogMessage.destroy();
+            }
+            if(oMessagepopover){
+                oMessagepopover.destroy();
+            }
+            if(oTemplate){
+                oTemplate.destroy();
+            }
+            if(oSettings){
+                oSettings.destroy();
+            }
         }
     });
 });
