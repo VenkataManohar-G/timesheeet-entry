@@ -72,6 +72,14 @@
           "odataVersion": "2.0"
         }
       },
+      "TimesheetUpdateService": {
+        "uri": "odata/v2/TimesheetUpdateService",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "2.0"
+        }
+      },
       "TimesheetPreviousService": {
         "uri": "odata/v2/TimesheetPreviousService",
         "type": "OData",
@@ -222,6 +230,16 @@
       },
       "TimesheetPreviousService": {
         "dataSource": "TimesheetPreviousService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true,
+          "useBatch": false
+        }
+      },
+      "TimesheetUpdateService": {
+        "dataSource": "TimesheetUpdateService",
         "preload": true,
         "settings": {
           "operationMode": "Server",

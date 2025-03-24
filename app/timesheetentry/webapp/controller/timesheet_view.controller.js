@@ -223,12 +223,12 @@ sap.ui.define([
             var configEntry = {};
             configEntry.Checked = false;
             configEntry.Id = '2';
-            configEntry.Field = 'Employee Wbs Element';
+            configEntry.Field = 'Employee WBS Element';
             configEntries.push(configEntry);
             var configEntry = {};
             configEntry.Checked = true;
             configEntry.Id = '3';
-            configEntry.Field = 'Wbs Element';
+            configEntry.Field = 'WBS Element';
             configEntries.push(configEntry);
             oConfigModel.setData(configEntries);
             that.getView().setModel(oConfigModel, "Settings");
@@ -428,23 +428,35 @@ sap.ui.define([
             var aSelectedItems = oTable.getSelectedItems();
             var length = aSelectedItems.length;
             var oDeleteButton = this.getView().byId("id_button_cancel");
+            var oSubmitButton = this.getView().byId("id_button_submit");
+            var oSubmitEntry = false;
             var oDeletedEntry = false;
+            var oStatusData = [];
             if (length > 0) {
                 try {
-                    oDeleteButton.setEnabled(true);
                     aSelectedItems.forEach(function (oItem, Index) {
-                        var oTimesheetStatus = oItem.getCells()[17].getText();
-                        if (oTimesheetStatus === '60') {
-                            oDeletedEntry = true;
-                            throw 'Already deleted';
-                        }
+                        oStatusData.push({Status:oItem.getCells()[17].getText()});
                     });
+                    var oDeleteStatus = oStatusData.filter(Item => Item.Status == '30');
+                    if(oDeleteStatus.length > 0){
+                        oDeleteButton.setEnabled(true);    
+                    }else{
+                        oDeleteButton.setEnabled(false);
+                    }
+                    var oSaveStatus = oStatusData.filter(Item => Item.Status == '10');
+                    if(oSaveStatus.length > 0){
+                        oSubmitButton.setEnabled(true);    
+                    }else{
+                        oSubmitButton.setEnabled(false);
+                    }
                 } catch (error) {
                     oDeleteButton.setEnabled(false);
+                    oSubmitButton.setEnabled(false);
                 }
 
             } else {
                 oDeleteButton.setEnabled(false);
+                oSubmitButton.setEnabled(false);
             }
         },
         /*Get Add Entry Fragment*/
@@ -477,9 +489,9 @@ sap.ui.define([
                 TemplateId = '';
                 TemplateDesc = '';
                 if(isAllWbsElement){
-                    this.getView().byId("id_wbs_elmt").setText("Wbs Element");
+                    this.getView().byId("id_wbs_elmt").setText("WBS Element");
                 }else{
-                    this.getView().byId("id_wbs_elmt").setText("Employee Wbs Element");
+                    this.getView().byId("id_wbs_elmt").setText("Employee WBS Element");
                 }
                 if (addCompanyCode) {
                     dialogCopmapcycode.setSelectedKey(addCompanyCode);
@@ -496,9 +508,9 @@ sap.ui.define([
                 dialogPersonworkext.setText(this.getView().byId("id_employee_extid").getText());
                 dialogpersonaggre.setText(this.getView().byId("id_wrkid_add").getText());
                 if(isAllWbsElement){
-                    this.getView().byId("id_wbs_elmt").setText("Wbs Element");
+                    this.getView().byId("id_wbs_elmt").setText("WBS Element");
                 }else{
-                    this.getView().byId("id_wbs_elmt").setText("Employee Wbs Element");
+                    this.getView().byId("id_wbs_elmt").setText("Employee WBS Element");
                 }
                 if (addCompanyCode) {
                     dialogCopmapcycode.setSelectedKey(addCompanyCode);
@@ -899,7 +911,7 @@ sap.ui.define([
                         that.getView().setModel(oWbsModelData, "ResourceWbs");
                         that._setwbsDialog();
                     } else {
-                        MessageBox.warning("No Wbs Element Data Found. Please try with another Date..");
+                        MessageBox.warning("No WBS Element Data Found. Please try with another Date..");
                         oBusyDialogoWbs.close();
                     }
                 }.bind(this),
@@ -926,7 +938,7 @@ sap.ui.define([
                         that.getView().setModel(oWbsModelDataAll, "ResourceWbsAll");
                         that._setwbsAllDialog();
                     } else {
-                        MessageBox.warning("No Wbs Element Data Found.");
+                        MessageBox.warning("No WBS Element Data Found.");
                         oBusyDialogoWbs.close();
                     }
                 }.bind(this),
@@ -1630,6 +1642,21 @@ sap.ui.define([
                 });
             });
         },
+        _updateallrecords: function (oModelEntry, oRecordEntry) {
+            return new Promise((resolve, reject) => {
+                oModelEntry.create("/MyTimesheetUpdate", oRecordEntry, {
+                    success: function (data, response) {
+                        if (response.statusCode == '201') {
+                            resolve(response);
+                        }
+                    }.bind(this),
+                    error: function (error) {
+                        var errorLog = JSON.parse(error.responseText);
+                        reject(errorLog);
+                    }.bind(this)
+                });
+            });
+        },
         _logmessageError: function () {
             var that = this;
             var oemployeeExtId = this.getView().byId("id_employee_extid");
@@ -1653,6 +1680,30 @@ sap.ui.define([
                 })
             });
             this.oLogMessagedeleteAllDialog.open();
+        },
+        _logmessageUpdate: function () {
+            var that = this;
+            var oemployeeExtId = this.getView().byId("id_employee_extid");
+            var oemployeeExtIdVal = oemployeeExtId.getText();
+            this.oLogMessageupdateAllDialog = new Dialog({
+                type: DialogType.Message,
+                title: "Information",
+                state: ValueState.Information,
+                content: new Text({ text: "Entries Processed for Submission successfully" }),
+                beginButton: new Button({
+                    type: ButtonType.Emphasized,
+                    text: "Ok",
+                    press: function () {
+                        deletecount = 0;
+                        TemplateId = '';
+                        TemplateDesc = '';
+                        this.oLogMessageupdateAllDialog.close();
+                        oBusyDialogDeleteAll.close();
+                        that._bindtimesheet(oemployeeExtIdVal, DateValue1, DateValue2);
+                    }.bind(this)
+                })
+            });
+            this.oLogMessageupdateAllDialog.open();
         },
         onsaveDialog: async function (oEvent) {
             var that;
@@ -1833,8 +1884,7 @@ sap.ui.define([
                 text: "Please wait....."
             });
             oBusyDialogDeleteAll.open();
-            var oModelDeleteAll = this.getOwnerComponent().getModel();
-            oModelDeleteAll.setUseBatch(true);
+            var oModelUpdateAll = this.getOwnerComponent().getModel('TimesheetUpdateService');
             var oRecordEntries = [];
             var that = this;
             var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
@@ -1870,13 +1920,13 @@ sap.ui.define([
                     TimesheetData.TimeSheetDataFields_HoursUnitOfMeasure = 'H';
                     oRecordEntries[i] = TimesheetData;
                     try {
-                        let result = await that._deleteallrecords(oModelDeleteAll, oRecordEntries[i]);
+                        let result = await that._updateallrecords(oModelUpdateAll, oRecordEntries[i]);
                     } catch (error) {
                         continue;
                     }
                     
                 }
-                that._logmessageError();
+                that._logmessageUpdate();
             }
         },
         templateChange: async function (oEvent) {
@@ -2567,7 +2617,7 @@ sap.ui.define([
             var fieldData = SettingTable.getBinding("items"),
             ofieldList = fieldData.oList;
             if(ofieldList[1].Checked == true && ofieldList[2].Checked == true){
-                MessageBox.error("Both Employee Wbs Element and Wbs Element cannot be checked!!");
+                MessageBox.error("Both Employee WBS Element and WBS Element cannot be checked!!");
             }else{
                 if(ofieldList[0].Checked == true){
                     oFieldModel = this.getView().getModel("FieldProperty");
@@ -2579,13 +2629,13 @@ sap.ui.define([
                 }
                 if(ofieldList[1].Checked == true){
                     isAllWbsElement = '';
-                    this.getView().byId("id_wbs_elmt").setText("Employee Wbs Element");
+                    this.getView().byId("id_wbs_elmt").setText("Employee WBS Element");
                 }else if(ofieldList[2].Checked == true){
                     isAllWbsElement = 'X';
-                    this.getView().byId("id_wbs_elmt").setText("Wbs Element");
+                    this.getView().byId("id_wbs_elmt").setText("WBS Element");
                 }else{
                     isAllWbsElement = 'X';
-                    this.getView().byId("id_wbs_elmt").setText("Wbs Element");
+                    this.getView().byId("id_wbs_elmt").setText("WBS Element");
                 }
                 this.getView().byId("id_dialogsettings").close();
             }
